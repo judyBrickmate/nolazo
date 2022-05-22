@@ -1,0 +1,54 @@
+.input-search {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: space-between;
+  .MuiFormControl-root {
+    margin: 0;
+    width: 300px;
+  }
+  .MuiOutlinedInput-input {
+    padding: 10px;
+  }
+}
+.app-select {
+  .MuiSelect-select {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
+
+.modal-container {
+  position: absolute;
+  background-color: white;
+  width: 30%;
+  border: 1px solid rgb(169, 169, 169);
+  font-size: 14px;
+  padding: 30px;
+  top: 10%;
+  left: 30%;
+
+  .text-field {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    width: 87%;
+    margin: 0 auto;
+    justify-content: space-between;
+  }
+  .modal-h3 {
+    width: 90%;
+    border-bottom: 1px solid rgb(85, 85, 85);
+    padding: 10px;
+  }
+  .button-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .button {
+    width: 80%;
+    margin-top: 20px;
+  }
+}

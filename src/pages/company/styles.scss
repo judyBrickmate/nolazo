@@ -1,0 +1,58 @@
+.input-search {
+  .MuiFormControl-root {
+    margin: 0;
+    width: 300px;
+  }
+  .MuiOutlinedInput-input {
+    padding: 10px;
+  }
+}
+.app-select {
+  width: 150px;
+  .MuiSelect-select {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}
+.css-1ygcj2i-MuiTableCell-root {
+  width: 100px;
+}
+
+.product-edit-modal-container,
+.register-modal-container {
+  position: absolute;
+  background-color: white;
+  width: 30%;
+  border: 1px solid rgb(169, 169, 169);
+  font-size: 14px;
+  padding: 30px;
+  top: 80%;
+  left: 40%;
+
+  .text-field {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    width: 87%;
+    margin: 0 auto;
+    justify-content: space-between;
+    input {
+      padding: 10px;
+    }
+  }
+  .modal-h3 {
+    width: 90%;
+    border-bottom: 1px solid rgb(85, 85, 85);
+    padding: 10px;
+  }
+  .button-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .button {
+    width: 80%;
+    margin-top: 20px;
+  }
+}
