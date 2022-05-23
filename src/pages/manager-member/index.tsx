@@ -8,7 +8,7 @@ import { UserService } from "../../services";
 import { COLOR, UserStatus, USER_STATUS } from "../../utils";
 import TableMember from "./component/TableMember";
 import "./styles.scss";
-const Enum = require("../../utils/enum");
+import Enum from "../../utils/enum";
 
 export default function ManagerMember() {
   const [status, setStatus] = useState("default");

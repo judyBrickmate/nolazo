@@ -1,4 +1,4 @@
-module.exports = class Enum {
+export default class Enum {
   constructor(data) {
     this.data = data;
     Object.keys(this.data).map((key) => this.set(key));
@@ -62,4 +62,4 @@ module.exports = class Enum {
     const key = this.getKey(value).replace("_", " ").toLowerCase();
     return key.charAt(0).toUpperCase() + key.slice(1);
   }
-};
+}
