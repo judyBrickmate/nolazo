@@ -2,8 +2,9 @@ import AppSelect from "../../../component/app-select/AppSelect";
 import NewAppSelect from "../../../component/app-select/NewAppSelect";
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Button, Checkbox, FormControlLabel, StyledEngineProvider, Table, TableCell, TableRow, TextField, Typography } from "@mui/material";
+import { Button, Card, CardMedia, Checkbox, FormControlLabel, StyledEngineProvider, Table, TableCell, TableRow, TextareaAutosize, TextField, Typography } from "@mui/material";
 import { ICategory, ICategoryRoot, ICategorySelect } from "../../../interface";
+import AddCircleOutlineTwoToneIcon from "@mui/icons-material/AddCircleOutlineTwoTone";
 import { COLOR, GoogleMap, StoreStatus } from "../../../utils";
 import { ROUTER } from "../../../router/routes";
 import { StoreService } from "../../../services";
@@ -34,12 +35,13 @@ const TableRegister = (props: ITableRegisterProps) => {
   const [isPrimaryHow, setIsPrimaryHow] = useState(false);
   const [isPrimaryWhere, setIsPrimaryWhere] = useState(false);
 
-  const [imgUri, setImgUri] = useState([]);
+  const [bannerUri, setBannerUri] = useState("");
   const [storeName, setStoreName] = useState("");
   const [ownerName, setOwnerName] = useState("");
   const [contact, setContact] = useState("");
   const [contactPlus, setContactPlus] = useState("");
   const [businessNumber, setBusinessNumber] = useState("");
+  const [attachment, setAttachment] = useState("");
   const [textLocation, setTextLocation] = useState("");
   const [location, setLocation] = useState("");
   const [geometry, setGeomtry] = useState({ lat: 0, lng: 0 });
@@ -51,8 +53,24 @@ const TableRegister = (props: ITableRegisterProps) => {
   const [freeAge, setFreeAge] = useState("");
   const [homepage, setHomepage] = useState("");
   const [terms, setTerms]: any = useState({});
+  //time
+  const timeArray = [
+    { day: "월요일", time: "" },
+    { day: "화요일", time: "" },
+    { day: "수요일", time: "" },
+    { day: "목요일", time: "" },
+    { day: "금요일", time: "" },
+    { day: "토요일", time: "" },
+    { day: "일요일", time: "" },
+  ];
 
+  const [time, setTime] = useState(timeArray);
+  const [sendTime, setSendTime]: any = useState([]);
+
+  const [pics, setPics] = useState<any>([]);
   const [imageArray, setImageArray]: any = useState([]);
+  const [sendImageArray, setSendImageArray]: any = useState([]);
+  const [bannerDisplayUri, setBannerDisplayUri] = useState("");
 
   const mapSelect = (item: ICategory) => ({ label: item.name, value: item.id });
 
@@ -69,6 +87,14 @@ const TableRegister = (props: ITableRegisterProps) => {
     listTypeHow.length === 0 && setListTypeHow(listHowData);
     listTypeWhere.length === 0 && setListTypeWhere(listWhereData);
   }, [allCategory]);
+
+  useEffect(() => {
+    for (let i = 0; i < timeArray.length; i++) {
+      let first = timeArray[i].day;
+      let second = timeArray[i].time;
+      sendTime.push(first + " " + second);
+    }
+  }, [time]);
 
   const column = {
     1: "업체 카테고리 분류",
@@ -180,20 +206,48 @@ const TableRegister = (props: ITableRegisterProps) => {
   };
 
   const uploadImageResource = async () => {
+    for await (const image of imageArray) {
+      const response = await StoreService.uploadImage(image);
+      sendImageArray.push(response?.data?.data?.image.key);
+    }
+    console.log(sendImageArray);
+
+    if (sendImageArray !== "") {
+      uploadAttachment();
+    }
+
+    // try {
+    //   const response = await StoreService.uploadImage(formData);
+    //   if (response.data?.status === 201) {
+    //     imageArray.push(response?.data?.data?.image.key);
+    //     if (attachment !== "") {
+    //       uploadAttachment();
+    //     } else {
+    //       handleSubmit();
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
+
+  const uploadAttachment = async () => {
     const formData: any = new FormData();
-    formData.append("imageType", "STORE_IMAGES");
-    formData.append("image", imgUri);
-    formData.append("index", 2);
+    formData.append("documentType", "STORE_DOCUMENT");
+    formData.append("document", attachment);
 
     try {
-      const response = await StoreService.uploadImage(formData);
+      const response = await StoreService.uploadFile(formData);
       if (response.data?.status === 201) {
-        imageArray.push(response?.data?.data?.image.key);
         handleSubmit();
       }
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleFileImages = (e: any) => {
+    setImageArray(e.target.files);
   };
 
   const isCheckboxChecked = (index: number, checked: boolean, name: string) => {
@@ -222,18 +276,21 @@ const TableRegister = (props: ITableRegisterProps) => {
     });
   };
 
+  for (let i = 0; i < timeArray.length; i++) {
+    let first = timeArray[i].day;
+    let second = timeArray[i].time;
+    sendTime.push(first + " " + second);
+  }
+
   const handleSubmit = async () => {
     const formData: any = new FormData();
     const categories: any = [];
     const termsInput = JSON.stringify(terms);
 
-    const images = [imgUri, imgUri];
     categories.push(refSelectWho?.current?.value, refSelectHowTwo?.current?.value, refSelectWhereTwo?.current?.value);
 
-    formData.append("banner", imgUri);
-    // formData.append('images', images);
-    //formData.append("/development/image.png", "development/store/images.webp");
-    formData.append("images", imageArray.join(","));
+    formData.append("banner", bannerUri);
+    formData.append("images", sendImageArray.join(","));
     formData.append("categories", categories.join(","));
     formData.append("title", storeName);
     formData.append("owner", ownerName);
@@ -241,10 +298,10 @@ const TableRegister = (props: ITableRegisterProps) => {
     formData.append("contact", contact);
     formData.append("contactAdditional", contactPlus);
     formData.append("location", locationData[0]?.formatted_address + " " + locationDetail);
-    formData.append("attachment", "dd");
+    formData.append("attachment", attachment);
     formData.append("lat", geometry.lat);
     formData.append("lng", geometry.lng);
-    formData.append("time", ["월요일 00:00-12:00", "화요일 00:00-12:00", "수요일 00:00-12:00", "목요일 00:00-12:00", "금요일 00:00-12:00", "토요일 00:00-12:00", "일요일 00:00-12:00"].join(","));
+    formData.append("time", sendTime.join(","));
     formData.append("closed", ["월요일", "화요일"].join(","));
     formData.append("workerDescription", workerDescription);
     formData.append("description", description);
@@ -277,7 +334,33 @@ const TableRegister = (props: ITableRegisterProps) => {
 
   const handleFilesBanner = (e: any) => {
     const file = e.target.files[0];
-    setImgUri(file);
+    setBannerUri(file);
+    setBannerDisplayUri(URL.createObjectURL(file));
+  };
+
+  const handleImagesFiles = (e: any) => {
+    if (imageArray.length > 5) {
+      e.preventDefault();
+      alert("이미지는 배너 포함 최대 7개 까지만 등록 가능합니다");
+      return;
+    }
+    const file = e.target.files[0];
+    setImageArray((prev: any) => [...prev, file]); //imageArray에 하나씩 추가
+    setPics((prev: any) => [...prev, URL.createObjectURL(file)]);
+  };
+
+  const removeImage = (id: any) => {
+    setImageArray((prev: any) => prev?.filter((item: any, index: number) => index !== id));
+    setPics((prev: any) => prev?.filter((item: any, index: number) => index !== id));
+  };
+
+  const handleAttachment = (e: any) => {
+    const file = e.target.files[0];
+    setAttachment(file);
+  };
+
+  const handleTimeChange = (e: any, index: number) => {
+    setTime((prev: any) => prev.map((el: any, idx: number) => (idx === index ? { ...el, time: e.target.value } : el)));
   };
 
   // We have fix on 8 hours to make it work, please be careful soft-hand
@@ -299,8 +382,52 @@ const TableRegister = (props: ITableRegisterProps) => {
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableRow>
             <TableCell variant="head">이미지 업로드</TableCell>
+            {/* <TableCell>
+              <input accept="image/*" type="file" onChange={handleFilesBanner} />
+              <input accept="image/*" multiple type="file" onChange={handleFileImages} />
+            </TableCell> */}
             <TableCell>
-              <input accept="image/*" multiple type="file" onChange={handleFilesBanner} />
+              <div style={{ display: "flex", marginLeft: "20px" }}>
+                <Card style={{ margin: "0 10px", display: "flex" }}>
+                  <label htmlFor="banner" style={{ cursor: "pointer" }}>
+                    <CardMedia component="img" height="150" width="220" alt="배너를 업로드해주세요.(필수)" image={bannerDisplayUri} />
+                  </label>
+                  <input
+                    accept="image/*"
+                    id="banner"
+                    type="file"
+                    onChange={handleFilesBanner}
+                    style={{
+                      display: "none",
+                    }}
+                  />
+                </Card>
+                {pics.map((el: any, index: number) => (
+                  <div key={index} style={{ margin: "0 10px" }}>
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                      <Button onClick={() => removeImage(index)}>X</Button>
+                    </div>
+                    <CardMedia component="img" height="140" alt="images" image={el} />
+                  </div>
+                ))}
+                <PlusImageWrapper>
+                  <AddCircleOutlineTwoToneIcon color="primary" style={{ position: "absolute" }}>
+                    add_circle
+                  </AddCircleOutlineTwoToneIcon>
+                  <input
+                    accept="image/*"
+                    id="raised-button-file"
+                    type="file"
+                    onChange={handleImagesFiles}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      cursor: "pointer",
+                      opacity: "0",
+                    }}
+                  />
+                </PlusImageWrapper>
+              </div>
             </TableCell>
           </TableRow>
         </Table>
@@ -401,7 +528,7 @@ const TableRegister = (props: ITableRegisterProps) => {
                 id="input-search"
               />
               <Button style={{ marginLeft: "10px" }} variant="outlined">
-                <input type="file" id="input-file" multiple style={{ display: "none" }} onChange={handleFilesBanner} />
+                <input type="file" id="input-file" multiple style={{ display: "none" }} onChange={handleAttachment} />
                 <label htmlFor="input-file">사업자 등록증 첨부</label>
               </Button>
             </TableCell>
@@ -458,21 +585,29 @@ const TableRegister = (props: ITableRegisterProps) => {
           {/* time */}
           <TableRow>
             <TableCell variant="head">{column[8]}</TableCell>
-            <TableCell>월요일</TableCell>
+            <TableCell>
+              <div style={{ display: "flex", flexWrap: "wrap", width: "700px" }}>
+                {time.map((el: any, index: number) => (
+                  <div key={index} style={{ marginRight: "18px", marginBottom: "10px" }}>
+                    <span style={{ marginRight: "20px" }}>{el.day}</span>
+                    <input value={el.time} onChange={(e) => handleTimeChange(e, index)} placeholder="ex)00:00-12:00" />
+                  </div>
+                ))}
+              </div>
+            </TableCell>
           </TableRow>
           {/* workerDescription */}
           <TableRow>
             <TableCell variant="head">{column[12]}</TableCell>
             <TableCell>
-              <input
+              <TextareaAutosize
                 className="input-text-search"
                 onChange={(e) => setDescription(e.target.value)}
                 value={description}
                 name=""
-                type=""
                 id="input-search"
                 placeholder="업체 설명을 적어주세요."
-                style={{ width: "700px", height: "300px", border: "1px solid rgba(224, 224, 224, 1)", borderRadius: "10px" }}
+                style={{ width: "700px", height: "300px", border: "1px solid rgba(224, 224, 224, 1)", borderRadius: "4px", padding: "20px", fontSize: "14px" }}
               />
             </TableCell>
           </TableRow>
@@ -584,6 +719,15 @@ const Title = styled.span`
   font-weight: bold;
   color: ${COLOR.MAIN_COLOR};
   font-size: 18px;
+`;
+
+const PlusImageWrapper = styled.div`
+  margin: 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid gainsboro;
+  width: 200px;
 `;
 
 export default TableRegister;

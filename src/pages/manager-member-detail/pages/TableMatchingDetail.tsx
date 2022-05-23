@@ -1,10 +1,10 @@
-import { Box, Button, Pagination, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import moment from 'moment';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
-import { UserService } from '../../../services';
-import { COLOR } from '../../../utils';
-import styled from 'styled-components';
+import { Box, Button, Pagination, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
+import { UserService } from "../../../services";
+import { COLOR } from "../../../utils";
+import styled from "styled-components";
 
 type LocationState = {
   id: number;
@@ -14,11 +14,11 @@ export default function TableMatchingDetail(props: any) {
   const { userMatchingData } = props;
 
   const location = useLocation();
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
 
   const { id } = location.state as LocationState;
 
-  const column = ['매칭번호', '매칭방명', '매칭방매니저', '업체명', '상품명', '결제금액', '결제상태', '매칭일자'];
+  const column = ["매칭번호", "매칭방명", "매칭방매니저", "업체명", "상품명", "결제금액", "결제상태", "매칭일자"];
 
   useEffect(() => {
     getUserName();
@@ -42,12 +42,12 @@ export default function TableMatchingDetail(props: any) {
     if (userMatchingData.items.length === 0) {
       return (
         <>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: "flex" }}>
             <h1
               style={{
                 color: COLOR.MIDDLE_BLACK,
-                fontSize: '24px',
-                margin: '100px auto',
+                fontSize: "24px",
+                margin: "100px auto",
               }}
             >
               데이터가 없습니다.
@@ -94,14 +94,14 @@ export default function TableMatchingDetail(props: any) {
                 <TableCell align="center">{row.product.name}</TableCell>
                 <TableCell align="center">{row.price}</TableCell>
                 <TableCell align="center">
-                  {row.payments.status === 'INITIAL' && '매칭대기중'}
-                  {row.payments.status === 'PENDING' && '미결제'}
-                  {row.payments.status === 'SUCCESS' && '결제완료'}
-                  {row.payments.status === 'FAILED' && '결제실패'}
-                  {row.payments.status === 'REFUND' && '환불요청'}
+                  {row.status === "INITIAL" && "매칭대기중"}
+                  {row.status === "PENDING" && "미결제"}
+                  {row.status === "SUCCESS" && "결제완료"}
+                  {row.status === "FAILED" && "결제실패"}
+                  {row.status === "REFUND" && "환불요청"}
                 </TableCell>
 
-                <TableCell align="center">{moment(row.createdAt).format('YYYY-MM-DD hh:mm:ss')}</TableCell>
+                <TableCell align="center">{moment(row.createdAt).format("YYYY-MM-DD hh:mm:ss")}</TableCell>
               </TableRow>
             ))}
           </TableBody>

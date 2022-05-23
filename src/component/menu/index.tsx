@@ -17,7 +17,8 @@ export default function Menu() {
     // return ListMenuStore.map((menu, index) => {});
     const user = useAppSelector((state) => state.user);
 
-    if (user.user?.role === "업체관리자") {
+    if (localStorage.getItem("USER_ROLE") === "업체관리자") {
+      console.log(localStorage.getItem("USER_ROLE"));
       return ListMenuStore.map((menu, index) => {
         var isActive = false;
         var indexChildren = -1;

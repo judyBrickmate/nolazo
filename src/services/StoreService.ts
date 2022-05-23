@@ -71,8 +71,22 @@ export const createStore = (body: any) => {
   });
 };
 
-export const uploadImage = (body: any) => {
+export const uploadImage = (image: any) => {
   const url = "upload";
+  const formData: any = new FormData();
+
+  formData.append("imageType", "STORE_IMAGES");
+  formData.append("image", image);
+  return API.post(url, formData, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const uploadFile = (body: any) => {
+  const url = "upload/document";
   return API.post(url, body, {
     headers: {
       Accept: "application/json",

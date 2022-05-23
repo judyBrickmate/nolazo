@@ -58,8 +58,8 @@ module.exports = class Enum {
   }
 
   getTitle(value) {
-    if (!this.hasValue(value)) return '';
-    const key = this.getKey(value).replace('_', ' ').toLowerCase();
+    if (!this.hasValue(value)) return "";
+    const key = this.getKey(value).replace("_", " ").toLowerCase();
     return key.charAt(0).toUpperCase() + key.slice(1);
   }
 };

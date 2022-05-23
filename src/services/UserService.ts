@@ -11,44 +11,17 @@ export const login = (identityKey: any, password: any) => {
   });
 };
 
-export const getListUser = (
-  startDate: string,
-  endDate: string,
-  page: number,
-  limit: number,
-  isAdminPage: boolean,
-  filter?: string,
-  member?: string
-) => {
+export const getListUser = (startDate: string, endDate: string, page: number, limit: number, isAdminPage: boolean, filter?: string, member?: string) => {
   const url = `/users?from=${startDate}&to=${endDate}&isAdminPage=${isAdminPage}&page=${page}&limit=${limit}&filter={${filter}}&member=${member}`;
   return API.get(url);
 };
 
-export const getListUserMatch = (
-  id: number,
-  startDate: string,
-  endDate: string,
-  page: number,
-  limit: number,
-  isAdminPage: boolean,
-  filter?: string,
-  member?: string
-) => {
+export const getListUserMatch = (id: number, startDate: string, endDate: string, page: number, limit: number, isAdminPage: boolean, filter?: string, member?: string) => {
   const url = `/users/${id}/matchings?from=${startDate}&to=${endDate}&isAdminPage=${isAdminPage}&page=${page}&limit=${limit}&filter={${filter}}&member=${member}`;
   return API.get(url);
 };
 
-export const getStoreReview = (
-  id: number,
-  type: string,
-  startDate: string,
-  endDate: string,
-  isAdminPage: boolean,
-  page: number,
-  limit: number,
-  filter?: string,
-  search?: string
-) => {
+export const getStoreReview = (id: number, type: string, startDate: string, endDate: string, isAdminPage: boolean, page: number, limit: number, filter?: string, search?: string) => {
   const url = `/users/${id}/reviews/${type}?from=${startDate}&to=${endDate}&isAdminPage=${isAdminPage}&page=${page}&limit=${limit}&filter={${filter}}`;
   return API.get(url);
 };
@@ -90,30 +63,12 @@ export const updateUser = async (data: dataUpdateAdmin, id: number) => {
   return API.patch(url, bodyData);
 };
 
-export const getUserOrderList = (
-  id: number,
-  startDate: string,
-  endDate: string,
-  page: number,
-  limit: number,
-  isAdminPage: boolean,
-  filter: string
-) => {
+export const getUserOrderList = (id: number, startDate: string, endDate: string, page: number, limit: number, isAdminPage: boolean, filter: string) => {
   const url = `/users/${id}/payments?from=${startDate}&to=${endDate}&isAdminPage=${isAdminPage}&page=${page}&limit=${limit}&filter={${filter}}`;
   return API.get(url);
 };
 
-export const getMatchReview = (
-  id: number,
-  type: string,
-  startDate: string,
-  endDate: string,
-  isAdminPage: boolean,
-  page: number,
-  limit: number,
-  filter?: string,
-  search?: string
-) => {
+export const getMatchReview = (id: number, type: string, startDate: string, endDate: string, isAdminPage: boolean, page: number, limit: number, filter?: string, search?: string) => {
   const url = `/users/${id}/reviews/${type}?from=${startDate}&to=${endDate}&isAdminPage=${isAdminPage}&page=${page}&limit=${limit}&filter={${filter}}`;
   return API.get(url);
 };
@@ -128,14 +83,7 @@ export const deleteAdminUser = (id: number) => {
   return API.delete(url);
 };
 
-export const getInquiriesList = (
-  id: number,
-  startDate: string,
-  endDate: string,
-  page: number,
-  limit: number,
-  isAdminPage: boolean
-) => {
+export const getInquiriesList = (id: number, startDate: string, endDate: string, page: number, limit: number, isAdminPage: boolean) => {
   const url = `/users/${id}/inquiries?from=${startDate}&to=${endDate}&isAdminPage=${isAdminPage}&page=${page}&limit=${limit}`;
   return API.get(url);
 };
@@ -143,4 +91,12 @@ export const getInquiriesList = (
 export const submitAnswer = (id: number, inquiryId: number, answer: string) => {
   const url = `users/${id}/inquiries/${inquiryId}`;
   return API.patch(url, { answer: answer });
+};
+
+export const blockUser = (id: number, isBlock: boolean) => {
+  const url = `users/${id}`;
+  const bodyData = {
+    status: isBlock ? "차단" : "정상",
+  };
+  return API.patch(url, bodyData);
 };

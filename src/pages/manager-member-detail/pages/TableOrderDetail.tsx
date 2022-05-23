@@ -1,10 +1,10 @@
-import { Box, Button, Pagination, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import moment from 'moment';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
-import { UserService } from '../../../services';
-import { COLOR } from '../../../utils';
-import styled from 'styled-components';
+import { Box, Button, Pagination, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
+import { UserService } from "../../../services";
+import { COLOR } from "../../../utils";
+import styled from "styled-components";
 
 type LocationState = {
   id: number;
@@ -13,11 +13,11 @@ type LocationState = {
 export default function TableOrderDetail(props: any) {
   const { userOrderData } = props;
   const location = useLocation();
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
 
   const { id } = location.state as LocationState;
 
-  const column = ['주문번호', '주문구분', '업체명', '주문정보', '수량', '주문상태', '결제금액', '결제수단', '결제일시', '환불요청일시'];
+  const column = ["주문번호", "주문구분", "업체명", "주문정보", "수량", "주문상태", "결제금액", "결제수단", "결제일시", "환불요청일시"];
 
   useEffect(() => {
     getUserName();
@@ -41,12 +41,12 @@ export default function TableOrderDetail(props: any) {
     if (userOrderData.items.length === 0) {
       return (
         <>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: "flex" }}>
             <h1
               style={{
                 color: COLOR.MIDDLE_BLACK,
-                fontSize: '24px',
-                margin: '100px auto',
+                fontSize: "24px",
+                margin: "100px auto",
               }}
             >
               데이터가 없습니다.
@@ -79,19 +79,19 @@ export default function TableOrderDetail(props: any) {
                 <TableCell align="center" component="th" scope="row">
                   {row.id}
                 </TableCell>
-                <TableCell align="center">{row.type === 'STORE' ? '업체' : '매칭'}</TableCell>
+                <TableCell align="center">{row.type === "STORE" ? "업체" : "매칭"}</TableCell>
                 <TableCell align="center">{row.store.title}</TableCell>
                 <TableCell align="center">{row.product.name}</TableCell>
                 <TableCell align="center">{row.amount}</TableCell>
                 <TableCell align="center">
-                  {row.status === 'SUCCESS' && '결제완료'}
-                  {row.status === 'PENDING' && '미결제'}
-                  {row.status === 'REFUND' && '환불요청'}
+                  {row.status === "SUCCESS" && "결제완료"}
+                  {row.status === "PENDING" && "미결제"}
+                  {row.status === "REFUND" && "환불요청"}
                 </TableCell>
-                <TableCell align="center">{row.paidPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')}</TableCell>
+                <TableCell align="center">{row.paidPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
                 <TableCell align="center">아임포트</TableCell>
-                <TableCell align="center">{moment(row.createdAt).format('YYYY-MM-DD')}</TableCell>
-                <TableCell align="center">{row.refundAt ?? '--'}</TableCell>
+                <TableCell align="center">{moment(row.createdAt).format("YYYY-MM-DD hh:mm:ss")}</TableCell>
+                <TableCell align="center">{row.refundAt ?? "--"}</TableCell>
               </TableRow>
             ))}
           </TableBody>
