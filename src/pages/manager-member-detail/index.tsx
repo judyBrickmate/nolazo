@@ -1,20 +1,19 @@
-import { Button, Container, FormControlLabel, Pagination, Radio, RadioGroup, TextField } from '@mui/material';
-import { Box } from '@mui/system';
-import moment from 'moment';
-import React, { useEffect, useRef, useState } from 'react';
-import AppSelect from '../../component/app-select/AppSelect';
-import { UserService } from '../../services';
-import { UserStatus, USER_STATUS } from '../../utils';
-import TableMember from '../manager-member/component/TableMember';
-import Enum from '../../utils/enum';
-import { useLocation } from 'react-router-dom';
-import TableOrderDetail from './pages/TableOrderDetail';
-import { ROUTER } from '../../router/routes';
-import PageNotFound from '../../router/PageNotFound';
-import TableMatchingDetail from './pages/TableMatchingDetail';
-import SearchBar from './component/SearchBar';
-import TableStoreReviewDetail from './pages/TableStoreReviewDetail';
-import TableMatchingReviewDetail from './pages/TableMatchingReviewDetail';
+import { Button, Container, FormControlLabel, Pagination, Radio, RadioGroup, TextField } from "@mui/material";
+import { Box } from "@mui/system";
+import moment from "moment";
+import React, { useEffect, useRef, useState } from "react";
+import AppSelect from "../../component/app-select/AppSelect";
+import { UserService } from "../../services";
+import { UserStatus, USER_STATUS } from "../../utils";
+import TableMember from "../manager-member/component/TableMember";
+import { useLocation } from "react-router-dom";
+import TableOrderDetail from "./pages/TableOrderDetail";
+import { ROUTER } from "../../router/routes";
+import PageNotFound from "../../router/PageNotFound";
+import TableMatchingDetail from "./pages/TableMatchingDetail";
+import SearchBar from "./component/SearchBar";
+import TableStoreReviewDetail from "./pages/TableStoreReviewDetail";
+import TableMatchingReviewDetail from "./pages/TableMatchingReviewDetail";
 
 type LocationState = {
   id: number;
@@ -22,7 +21,7 @@ type LocationState = {
 
 export default function ManagerMemberDetail() {
   const location = useLocation();
-  const [status, setStatus] = useState('all');
+  const [status, setStatus] = useState("all");
   const [loading, setLoading] = useState(true);
   const refRangeDate = useRef<any>(null);
   const refSelect = useRef<any>(null);
@@ -30,7 +29,7 @@ export default function ManagerMemberDetail() {
   const refSelectThree = useRef<any>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
-  const [textFilter, setTextFilter] = useState('');
+  const [textFilter, setTextFilter] = useState("");
 
   const [userOrderData, setUserOrderData] = useState({
     items: [],
@@ -76,12 +75,12 @@ export default function ManagerMemberDetail() {
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
 
-      const filters = refSelectThree.current.value !== 'default' ? [`${refSelectThree.current.value}=${textFilter}`] : [`default=${textFilter}`];
+      const filters = refSelectThree.current.value !== "default" ? [`${refSelectThree.current.value}=${textFilter}`] : [`default=${textFilter}`];
 
-      if (refSelect.current.value !== 'default') filters.push(`type=${refSelect.current.value}`);
-      if (refSelectTwo.current.value !== 'default') filters.push(`status=${refSelectTwo.current.value}`);
+      if (refSelect.current.value !== "default") filters.push(`type=${refSelect.current.value}`);
+      if (refSelectTwo.current.value !== "default") filters.push(`status=${refSelectTwo.current.value}`);
 
-      const filter = filters.filter((column) => column).join(',');
+      const filter = filters.filter((column) => column).join(",");
 
       // const orderType = refSelect.current.value !== 'default' ? `,type=${refSelect.current.value}` : '';
       // const orderStatus = refSelectTwo.current.value !== 'default' ? `,status=${refSelectTwo.current.value}` : '';
@@ -97,8 +96,8 @@ export default function ManagerMemberDetail() {
       } else {
       }
     } catch (error: any) {
-      if (error?.response?.data.message[0] === 'to must be large than from') {
-        alert('날짜를 다시 확인해주세요');
+      if (error?.response?.data.message[0] === "to must be large than from") {
+        alert("날짜를 다시 확인해주세요");
       }
     }
   };
@@ -109,25 +108,25 @@ export default function ManagerMemberDetail() {
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
 
-      const filters = refSelectTwo.current.value !== 'default' ? [`${refSelectTwo.current.value}=${textFilter}`] : [`default=${textFilter}`];
+      const filters = refSelectTwo.current.value !== "default" ? [`${refSelectTwo.current.value}=${textFilter}`] : [`default=${textFilter}`];
 
-      if (refSelect.current.value !== 'default') filters.push(`status=${refSelect.current.value}`);
+      if (refSelect.current.value !== "default") filters.push(`status=${refSelect.current.value}`);
 
-      const filter = filters.filter((column) => column).join(',');
+      const filter = filters.filter((column) => column).join(",");
 
-      const response = await UserService.getListUserMatch(id, startDate, endDate, pageNumber, 10, true, filter, 'USER');
+      const response = await UserService.getListUserMatch(id, startDate, endDate, pageNumber, 10, true, filter, "USER");
 
       if (response.status === 200) {
         setTotalPage(response.data?.data.meta?.totalPages);
         setUserMatchingData(response?.data?.data);
-        console.log('match', response?.data.data);
+        console.log("match", response?.data.data);
       } else {
       }
     } catch (error: any) {
       console.log(error);
 
-      if (error?.response?.data.message[0] === 'to must be large than from') {
-        alert('날짜를 다시 확인해주세요');
+      if (error?.response?.data.message[0] === "to must be large than from") {
+        alert("날짜를 다시 확인해주세요");
       }
     }
   };
@@ -138,14 +137,14 @@ export default function ManagerMemberDetail() {
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
 
-      const filters = refSelect.current.value !== 'default' ? [`${refSelect.current.value}=${textFilter}`] : [`default=${textFilter}`];
+      const filters = refSelect.current.value !== "default" ? [`${refSelect.current.value}=${textFilter}`] : [`default=${textFilter}`];
 
       // if (refSelect.current.value !== "default")
       //   filters.push(`status=${refSelect.current.value}`);
 
-      const filter = filters.filter((column) => column).join(',');
+      const filter = filters.filter((column) => column).join(",");
 
-      const response = await UserService.getStoreReview(id, 'store', startDate, endDate, true, pageNumber, 10, filter);
+      const response = await UserService.getStoreReview(id, "store", startDate, endDate, true, pageNumber, 10, filter);
 
       if (response.status === 200) {
         setUserStoreReview(response?.data?.data);
@@ -163,11 +162,11 @@ export default function ManagerMemberDetail() {
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
 
-      const filters = refSelect.current.value !== 'default' ? [`${refSelect.current.value}=${textFilter}`] : [`default=${textFilter}`];
+      const filters = refSelect.current.value !== "default" ? [`${refSelect.current.value}=${textFilter}`] : [`default=${textFilter}`];
 
-      const filter = filters.filter((column) => column).join(',');
+      const filter = filters.filter((column) => column).join(",");
 
-      const response = await UserService.getMatchReview(id, 'match', startDate, endDate, true, pageNumber, 10, filter);
+      const response = await UserService.getMatchReview(id, "match", startDate, endDate, true, pageNumber, 10, filter);
 
       if (response.status === 200) {
         setUserMatchingReview(response?.data?.data);
@@ -178,7 +177,7 @@ export default function ManagerMemberDetail() {
       console.log(error);
 
       if (error?.response?.data.errorCode === 11010) {
-        alert('YYYY-MM-DD와 같은 날짜방식으로 입력하세요.');
+        alert("YYYY-MM-DD와 같은 날짜방식으로 입력하세요.");
       }
     }
   };
@@ -192,7 +191,7 @@ export default function ManagerMemberDetail() {
       return (
         <>
           <SearchBar
-            detail={'order'}
+            detail={"order"}
             getUserOrder={getUserOrder}
             refRangeDate={refRangeDate}
             refSelect={refSelect}
@@ -211,7 +210,7 @@ export default function ManagerMemberDetail() {
       return (
         <>
           <SearchBar
-            detail={'matching'}
+            detail={"matching"}
             getUserMatching={getUserMatching}
             refRangeDate={refRangeDate}
             refSelect={refSelect}
@@ -228,7 +227,7 @@ export default function ManagerMemberDetail() {
       return (
         <>
           <SearchBar
-            detail={'storeReview'}
+            detail={"storeReview"}
             getUserStoreReview={getUserStoreReview}
             refRangeDate={refRangeDate}
             refSelect={refSelect}
@@ -244,7 +243,7 @@ export default function ManagerMemberDetail() {
       return (
         <>
           <SearchBar
-            detail={'matchingReview'}
+            detail={"matchingReview"}
             getUserMatchingReview={getUserMatchingReview}
             setUserMatchingReview={setUserMatchingReview}
             refRangeDate={refRangeDate}

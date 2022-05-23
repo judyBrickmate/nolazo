@@ -6,7 +6,7 @@ import AppSelect from "../../component/app-select/AppSelect";
 import { StoreService } from "../../services";
 import { COLOR, StoreStatus, UserStatus, USER_STATUS } from "../../utils";
 import "./styles.scss";
-import Enum from "../../utils/enum";
+const Enum = require("../../utils/enum");
 import CompanyList from "./component/CompanyList";
 export default function Company() {
   const [status, setStatus] = useState("default");
