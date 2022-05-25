@@ -9,8 +9,8 @@ import { COLOR } from "../../utils";
 import TableMatching from "./component/TableMatching";
 
 export default function OperationsMatching() {
+  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("default");
-
   const refRangeDate = useRef<any>(null);
   const refSelect = useRef<any>(null);
   const refSelectTwo = useRef<any>(null);
@@ -26,15 +26,13 @@ export default function OperationsMatching() {
 
   const getMatching = async () => {
     try {
+      setLoading(true);
       const startDate = moment(refRangeDate.current?.startDate).add(1, "days").toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
       const fieldSearch = refSelect.current?.value;
       const statusData = refSelect.current?.value;
 
-      const filters =
-        refSelect.current.value !== "default"
-          ? [`${refSelect.current.value}=${textFilter}`]
-          : [`default=${textFilter}`];
+      const filters = refSelect.current.value !== "default" ? [`${refSelect.current.value}=${textFilter}`] : [`default=${textFilter}`];
 
       if (refSelectTwo.current.value !== "default") filters.push(`matchingStatus=${refSelectTwo.current.value}`);
 
@@ -55,6 +53,7 @@ export default function OperationsMatching() {
         alert("YYYY-MM-DD와 같은 날짜방식으로 입력하세요.");
       }
     }
+    setLoading(false);
   };
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -148,7 +147,7 @@ export default function OperationsMatching() {
 
       <Box sx={{ mt: 4 }}>
         {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
-        <TableMatching listMatching={listMatching} />
+        <TableMatching listMatching={listMatching} loading={loading} />
         {renderEmpty()}
       </Box>
     </div>

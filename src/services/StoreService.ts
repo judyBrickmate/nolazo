@@ -71,6 +71,16 @@ export const createStore = (body: any) => {
   });
 };
 
+export const updateStore = (id: any, body: any) => {
+  const url = `stores/${id}`;
+  return API.patch(url, body, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
 export const uploadImage = (image: any) => {
   const url = "upload";
   const formData: any = new FormData();
@@ -93,4 +103,19 @@ export const uploadFile = (body: any) => {
       "Content-Type": "multipart/form-data",
     },
   });
+};
+
+export const uploadDocument = (body: any) => {
+  const url = "upload/document";
+  return API.post(url, body, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
+export const deleteStoreImage = (storeId: number, body: any) => {
+  const url = `/stores/${storeId}/image`;
+  return API.delete(url, { data: body });
 };

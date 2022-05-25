@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  Pagination,
-  Paper,
-  StyledEngineProvider,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Pagination, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
@@ -44,20 +31,9 @@ export default function TableSecondary(props: any) {
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
 
-      const filters: [string] =
-        refSelect.current.value !== "default"
-          ? [`${refSelect.current.value}=${textFilter},layer=secondary`]
-          : [`default=${textFilter},layer=secondary`];
+      const filters: [string] = refSelect.current.value !== "default" ? [`${refSelect.current.value}=${textFilter},layer=secondary`] : [`default=${textFilter},layer=secondary`];
 
-      const response = await CategoryService.getCategoryList(
-        "HOW",
-        "2022-01-01",
-        endDate,
-        true,
-        pageNumber,
-        10,
-        filters
-      );
+      const response = await CategoryService.getCategoryList("HOW", "2022-01-01", endDate, true, pageNumber, 10, filters);
 
       if (response.status === 200) {
         setListSecondCategory(response.data?.data?.items);
@@ -69,6 +45,7 @@ export default function TableSecondary(props: any) {
         alert("YYYY-MM-DD와 같은 날짜방식으로 입력하세요.");
       }
     }
+    setLoading(false);
   };
 
   const renderEmpty = () => {
@@ -158,6 +135,8 @@ export default function TableSecondary(props: any) {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {loading && <CircularProgress />}
+
                 {listSecondCategory.map((row: any, index) => (
                   <TableRow key={row.id} className="table_row">
                     <TableCell align="center" component="th" scope="row">

@@ -1,7 +1,4 @@
-import {
-  Button,
-  TextField,
-} from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { useRef, useState } from "react";
 import AppSelect from "../../../component/app-select/AppSelect";
 import AppRangeDatePicker from "../../../component/app-range-date-picker";
@@ -16,7 +13,7 @@ interface LocationId {
 export default function ItemResisterModal(props: any) {
   const location = useLocation();
   const state = location.state as LocationId;
-  const {id} = state;
+  const { id } = state;
   const { setOpenRegister, getCompanyInfo } = props;
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
@@ -50,23 +47,23 @@ export default function ItemResisterModal(props: any) {
   };
 
   const handleSubmit = async () => {
-    if (ticketType.current.value === 'default') {
-      alert('단위를 선택해주세요');
+    if (ticketType.current.value === "default") {
+      alert("단위를 선택해주세요");
       return;
     }
-    if (exposureType.current.value === 'default') {
-      alert('노출여부를 선택해주세요');
+    if (exposureType.current.value === "default") {
+      alert("노출여부를 선택해주세요");
       return;
     }
     try {
       const response = await StoreService.addStoreProduct(id, objParam);
       if (response.status === 201) {
         setOpenRegister(false);
-        alert('등록되었습니다.');
+        alert("등록되었습니다.");
         getCompanyInfo();
       }
     } catch (error: any) {
-      throw new Error(error)
+      throw new Error(error);
     }
   };
 
@@ -74,13 +71,13 @@ export default function ItemResisterModal(props: any) {
     const value = e.target.value;
     const name = e.target.name;
     switch (name) {
-      case 'productName':
+      case "productName":
         setProductName(value);
         break;
-      case 'price':
+      case "price":
         setPrice(value);
         break;
-      case 'discountRate':
+      case "discountRate":
         setDisCountRate(value);
         break;
       default:
@@ -89,7 +86,7 @@ export default function ItemResisterModal(props: any) {
   };
 
   return (
-    <div className="register-modal-container">
+    <div className="register-modal-container" style={{ marginBottom: "30px", top: "10%", left: "50%", transform: " translateX(-50%)", width: "50%" }}>
       <h3 className="modal-h3">상품 등록</h3>
       <div className="text-field">
         <div className="label">상품명</div>
@@ -109,38 +106,39 @@ export default function ItemResisterModal(props: any) {
       </div>
       <div className="text-field">
         <div className="label">금액</div>
-        <TextField
-          className="input-text-search"
-          onChange={handleChange}
-          value={price}
-          margin="normal"
-          required
-          fullWidth
-          name="price"
-          type="number"
-          id="input-search"
-          placeholder={"금액을 입력하세요"}
-          style={{ margin: "10px", width: "250px" }}
-        />
-        <div className="app-select">
-          <AppSelect ref={ticketType} value={"HOUR"} listMenu={UnitType} />
-        </div>
+
+        <>
+          <TextField
+            className="input-text-search"
+            onChange={handleChange}
+            value={price}
+            margin="normal"
+            required
+            fullWidth
+            name="price"
+            type="number"
+            id="input-search"
+            placeholder={"금액을 입력하세요"}
+            style={{ margin: "10px", width: "250px" }}
+          />
+          <div className="app-select">
+            <AppSelect ref={ticketType} value={"HOUR"} listMenu={UnitType} />
+          </div>
+        </>
       </div>
       <div className="text-field">
         <div className="label">노출여부</div>
         <div className="app-select">
-          <AppSelect
-            ref={exposureType}
-            value={"exposed"}
-            listMenu={ExposureType}
-          />
+          <AppSelect ref={exposureType} value={"exposed"} listMenu={ExposureType} />
         </div>
       </div>
-      <AppRangeDatePicker
-        fromDate={new Date("2022-01-01")}
-        title="유효기간"
-        ref={refRangeDate}
-      />
+
+      <div className="text-field" style={{ marginBottom: "10px" }}>
+        <div className="label">유효기간</div>
+
+        <AppRangeDatePicker fromDate={new Date("2022-01-01")} title="" ref={refRangeDate} />
+      </div>
+
       <div className="text-field">
         <div className="label">할인율</div>
         <TextField
@@ -161,11 +159,7 @@ export default function ItemResisterModal(props: any) {
         <Button variant="contained" className="button" onClick={handleSubmit}>
           등록
         </Button>
-        <Button
-          variant="outlined"
-          className="button"
-          onClick={() => setOpenRegister(false)}
-        >
+        <Button variant="outlined" className="button" onClick={() => setOpenRegister(false)}>
           닫기
         </Button>
       </div>

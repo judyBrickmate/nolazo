@@ -9,6 +9,7 @@ import { COLOR } from "../../utils";
 import StoreReviewList from "./component/StoreReviewList";
 
 export default function OperationsMatchingReview() {
+  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("default");
   const refRangeDate = useRef<any>(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -25,27 +26,16 @@ export default function OperationsMatchingReview() {
 
   const getStoreReview = async () => {
     try {
-      const startDate = moment(refRangeDate.current?.startDate)
-        .add(1, "days")
-        .toISOString();
+      setLoading(true);
+      const startDate = moment(refRangeDate.current?.startDate).add(1, "days").toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
       const statusData = refSelect.current.value;
 
-      const filters =
-        refSelect.current.value !== "default"
-          ? [`${refSelect.current.value}=${textFilter}`]
-          : [`default=${textFilter}`];
+      const filters = refSelect.current.value !== "default" ? [`${refSelect.current.value}=${textFilter}`] : [`default=${textFilter}`];
 
       const filter = filters.filter((column) => column).join(",");
 
-      const response = await OperationService.getStoreReviewList(
-        startDate,
-        endDate,
-        true,
-        pageNumber,
-        10,
-        filter
-      );
+      const response = await OperationService.getStoreReviewList(startDate, endDate, true, pageNumber, 10, filter);
 
       if (response.status === 200) {
         setStoreReview(response.data?.data?.items);
@@ -57,12 +47,10 @@ export default function OperationsMatchingReview() {
         alert("YYYY-MM-DD와 같은 날짜방식으로 입력하세요.");
       }
     }
+    setLoading(false);
   };
 
-  const handleChangePage = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
   };
 
@@ -133,25 +121,14 @@ export default function OperationsMatchingReview() {
             placeholder="검색어를 입력하세요."
           />
         </div>
-        <Button
-          variant="contained"
-          sx={{ ml: 2, pt: "9px", pb: "9px" }}
-          onClick={getStoreReview}
-        >
+        <Button variant="contained" sx={{ ml: 2, pt: "9px", pb: "9px" }} onClick={getStoreReview}>
           검색
         </Button>
       </Box>
 
       <Box sx={{ mt: 4 }}>
-        {totalPage > 1 && (
-          <Pagination
-            count={totalPage}
-            shape="rounded"
-            sx={{ mb: 1 }}
-            onChange={handleChangePage}
-          />
-        )}
-        <StoreReviewList storeReview={storeReview} />
+        {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
+        <StoreReviewList storeReview={storeReview} loading={loading} />
         {renderEmpty()}
       </Box>
     </div>

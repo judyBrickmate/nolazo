@@ -1,9 +1,9 @@
 //ts-ignore
-import Geocode from "react-geocode";
+import Geocode from 'react-geocode';
 
-Geocode.setApiKey(String("AIzaSyB6OIV10dIirhIFvPQcukLV5ZX3A_ueeVk"));
-Geocode.setLanguage("ko");
-Geocode.setRegion("ko");
+Geocode.setApiKey(String(process.env.REACT_APP_GOOGLE_MAPS_API_KEY));
+Geocode.setLanguage('ko');
+Geocode.setRegion('ko');
 Geocode.enableDebug();
 
 export const GoogleMap = async (currentAddr: string) => {
@@ -14,6 +14,6 @@ export const GoogleMap = async (currentAddr: string) => {
       return res;
     })
     .catch((err) => {
-      console.log("geocoding error", err);
+      console.log('geocoding error', err);
     });
 };

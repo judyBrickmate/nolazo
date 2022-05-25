@@ -1,4 +1,4 @@
-import { Button, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Button, CircularProgress, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import React from "react";
 import { COLOR } from "../../../utils";
 import { ROUTER } from "../../../router/routes";
@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 
 function TableOrder(props: any) {
-  const { listOrder } = props;
+  const { listOrder, loading } = props;
 
   const column = ["주문번호", "주문구분", "업체명", "주문정보", "수량", "주문자명", "주문상태", "결제금액", "결제수단", "결제일시", "환불요청일시"];
   return (
@@ -22,6 +22,7 @@ function TableOrder(props: any) {
               ))}
             </TableRow>
           </TableHead>
+          {loading && <CircularProgress />}
 
           <TableBody>
             {listOrder.map((row: any) => (

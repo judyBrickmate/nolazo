@@ -62,4 +62,4 @@ export default class Enum {
     const key = this.getKey(value).replace("_", " ").toLowerCase();
     return key.charAt(0).toUpperCase() + key.slice(1);
   }
-}
+};

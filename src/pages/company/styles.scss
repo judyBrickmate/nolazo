@@ -20,24 +20,32 @@
 
 .product-edit-modal-container,
 .register-modal-container {
-  position: absolute;
+  position: fixed;
   background-color: white;
-  width: 30%;
   border: 1px solid rgb(169, 169, 169);
   font-size: 14px;
   padding: 30px;
-  top: 80%;
   left: 40%;
+  top: 30%;
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 
   .text-field {
     display: flex;
     text-align: center;
     align-items: center;
     width: 87%;
+    height: 50px;
     margin: 0 auto;
-    justify-content: space-between;
+    // justify-content: space-between;
     input {
       padding: 10px;
+    }
+
+    .label {
+      margin-right: 20px;
     }
   }
   .modal-h3 {

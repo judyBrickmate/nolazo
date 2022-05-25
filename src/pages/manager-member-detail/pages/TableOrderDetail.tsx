@@ -89,7 +89,7 @@ export default function TableOrderDetail(props: any) {
                   {row.status === "REFUND" && "환불요청"}
                 </TableCell>
                 <TableCell align="center">{row.paidPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</TableCell>
-                <TableCell align="center">아임포트</TableCell>
+                <TableCell align="center">{row.iamport[0].provider && "나이스페이"}</TableCell>
                 <TableCell align="center">{moment(row.createdAt).format("YYYY-MM-DD hh:mm:ss")}</TableCell>
                 <TableCell align="center">{row.refundAt ?? "--"}</TableCell>
               </TableRow>

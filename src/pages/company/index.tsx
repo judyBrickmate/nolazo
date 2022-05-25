@@ -1,4 +1,4 @@
-import { Button, Container, FormControlLabel, Pagination, Radio, RadioGroup, TextField } from "@mui/material";
+import { Button,  Container, FormControlLabel, Pagination, Radio, RadioGroup, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -9,6 +9,7 @@ import "./styles.scss";
 import Enum from "../../utils/enum";
 import CompanyList from "./component/CompanyList";
 export default function Company() {
+  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("default");
   const refRangeDate = useRef<any>(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -25,6 +26,7 @@ export default function Company() {
 
   const getCompanyList = async () => {
     try {
+      setLoading(true);
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
       const statusData = refSelect.current.value;
@@ -49,6 +51,7 @@ export default function Company() {
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,13 +65,12 @@ export default function Company() {
 
   const listType = [
     { label: "전체", value: "default" },
-    { label: "업체아이디", value: "id" },
+    { label: "업체아이디", value: "storeId" },
     { label: "업체명", value: "title" },
     { label: "업체연락처", value: "contact" },
     { label: "업체평점", value: "rating" },
-    { label: "결제건수", value: "paymentAmount" },
-    { label: "운영상태", value: "status" },
-    { label: "가입일", value: "createdAt" },
+    { label: "결제건수", value: "amount" },
+    { label: "가입일", value: "date" },
   ];
 
   const renderEmpty = () => {
@@ -90,6 +92,8 @@ export default function Company() {
       );
     }
   };
+
+  
 
   return (
     <div className="root-container">
@@ -142,7 +146,8 @@ export default function Company() {
       </Box>
       <Box sx={{ mt: 4 }}>
         {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
-        <CompanyList companyList={companyList} getCompanyList={getCompanyList} />
+        
+        <CompanyList companyList={companyList} getCompanyList={getCompanyList} loading={loading} />
         {renderEmpty()}
       </Box>
     </div>

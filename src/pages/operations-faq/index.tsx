@@ -6,6 +6,7 @@ import { COLOR } from "../../utils";
 import FaqList from "./component/FaqList";
 
 export default function OperationsFAQ() {
+  const [loading, setLoading] = useState(false);
   const refRangeDate = useRef<any>(null);
   const [pageNumber, setPageNumber] = useState(1);
   const [faqList, setFaqList] = useState([]);
@@ -38,17 +39,11 @@ export default function OperationsFAQ() {
 
   const getFaqList = async () => {
     try {
+      setLoading(true);
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
 
-      const response = await UserService.getInquiriesList(
-        0,
-        "2022-01-01",
-        endDate,
-        pageNumber,
-        10,
-        true
-      );
+      const response = await UserService.getInquiriesList(0, "2022-01-01", endDate, pageNumber, 10, true);
       if (response.status === 200) {
         setFaqList(response.data?.data?.items);
         setTotalPage(response.data?.data.meta?.totalPages);
@@ -56,12 +51,10 @@ export default function OperationsFAQ() {
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
 
-  const handleChangePage = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
   };
 
@@ -69,7 +62,7 @@ export default function OperationsFAQ() {
     <div className="root-container">
       <p className="title-page">고객 문의</p>
       <Box sx={{ mt: 4 }}>
-        <FaqList faqList={faqList} />
+        <FaqList faqList={faqList} loading={loading} />
         {renderEmpty()}
         {totalPage > 1 && (
           <Pagination

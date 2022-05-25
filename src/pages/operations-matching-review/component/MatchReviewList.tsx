@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  Collapse,
-  IconButton,
-  Paper,
-  StyledEngineProvider,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Collapse, IconButton, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useState } from "react";
@@ -19,18 +6,9 @@ import moment from "moment";
 import { OperationService } from "../../../services";
 
 export default function MatchReviewList(props: any) {
-  const { matchReview } = props;
+  const { matchReview, loading } = props;
 
-  const column = [
-    "매칭리뷰번호",
-    "매칭방번호",
-    "매칭방매니저",
-    "매칭방 이름",
-    "작성자",
-    "평점",
-    "작성일자",
-    "",
-  ];
+  const column = ["매칭리뷰번호", "매칭방번호", "매칭방매니저", "매칭방 이름", "작성자", "평점", "작성일자", ""];
 
   return (
     <StyledEngineProvider injectFirst>
@@ -45,14 +23,11 @@ export default function MatchReviewList(props: any) {
               ))}
             </TableRow>
           </TableHead>
+          {loading && <CircularProgress />}
+
           <TableBody>
             {matchReview.map((row: any, index: number) => (
-              <Row
-                key={index}
-                row={row}
-                index={index}
-                length={matchReview.length}
-              />
+              <Row key={index} row={row} index={index} length={matchReview.length} />
             ))}
           </TableBody>
         </Table>
@@ -93,16 +68,10 @@ function Row(props: any) {
         <TableCell align="center">{row.matching.title}</TableCell>
         <TableCell align="center">{row.user.name}</TableCell>
         <TableCell align="center">{row.rating}</TableCell>
-        <TableCell align="center">
-          {moment(row.createdAt).format("YYYY-MM-DD hh:mm:ss")}
-        </TableCell>
+        <TableCell align="center">{moment(row.createdAt).format("YYYY-MM-DD hh:mm:ss")}</TableCell>
 
         <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
+          <IconButton aria-label="expand row" size="small" onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>

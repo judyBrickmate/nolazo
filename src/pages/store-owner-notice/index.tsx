@@ -1,12 +1,4 @@
-import {
-  Button,
-  Container,
-  FormControlLabel,
-  Pagination,
-  Radio,
-  RadioGroup,
-  TextField,
-} from "@mui/material";
+import { Button, Container, FormControlLabel, Pagination, Radio, RadioGroup, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 import AppRangeDatePicker from "../../component/app-range-date-picker";
@@ -16,6 +8,7 @@ import TableNotice from "./component/TableNotice";
 import { NotificationService } from "../../services";
 
 export default function StoreOwnerNotice() {
+  const [loading, setLoading] = useState(false);
   const refRangeDate = useRef<any>(null);
   const [userStatus, setUserStatus] = useState("default");
   const [totalPage, setTotalPage] = useState(0);
@@ -31,28 +24,21 @@ export default function StoreOwnerNotice() {
 
   const getStoreNotice = async () => {
     try {
+      setLoading(true);
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
 
-      const response = await NotificationService.getNotification(
-        startDate,
-        endDate,
-        pageNumber,
-        10,
-        true
-      );
+      const response = await NotificationService.getNotification(startDate, endDate, pageNumber, 10, true);
 
       if (response.status === 200) {
         setListNotice(response.data?.data?.items);
         setTotalPage(response.data?.data.meta?.totalPages);
       }
     } catch (error: any) {}
+    setLoading(false);
   };
 
-  const handleChangePage = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
   };
 
@@ -89,25 +75,14 @@ export default function StoreOwnerNotice() {
             alignItems: "center",
           }}
         >
-          <Button
-            variant="contained"
-            sx={{ ml: 2, pt: "9px", pb: "9px" }}
-            onClick={getStoreNotice}
-          >
+          <Button variant="contained" sx={{ ml: 2, pt: "9px", pb: "9px" }} onClick={getStoreNotice}>
             검색
           </Button>
         </Box>
       </div>
       <Box sx={{ mt: 4 }}>
-        {totalPage > 1 && (
-          <Pagination
-            count={totalPage}
-            shape="rounded"
-            sx={{ mb: 1 }}
-            onChange={handleChangePage}
-          />
-        )}
-        <TableNotice listNotice={listNotice} />
+        {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
+        <TableNotice listNotice={listNotice} loading={loading} />
         {renderEmpty()}
       </Box>
     </div>

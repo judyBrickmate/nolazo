@@ -10,10 +10,41 @@ import { ROUTER } from "../../../router/routes";
 import { StoreService } from "../../../services";
 import { useNavigate } from "react-router";
 import "../styles.scss";
+import TermsChildren from "./TermsChildren";
 
 export interface ITableRegisterProps {
   allCategory: ICategoryRoot;
 }
+
+const listOptionItem = [
+  {
+    name: "반려동물 동반가능",
+  },
+  {
+    name: "유모차/휠체어",
+  },
+  {
+    name: "키즈카페",
+  },
+  {
+    name: "음식물 반입가능",
+  },
+  {
+    name: "흡연실",
+  },
+  {
+    name: "남/녀 화장실 구분",
+  },
+  {
+    name: "수유실",
+  },
+  {
+    name: "단체석",
+  },
+  {
+    name: "무선인터넷",
+  },
+];
 
 const TableRegister = (props: ITableRegisterProps) => {
   const { allCategory } = props;
@@ -55,22 +86,24 @@ const TableRegister = (props: ITableRegisterProps) => {
   const [terms, setTerms]: any = useState({});
   //time
   const timeArray = [
-    { day: "월요일", time: "" },
-    { day: "화요일", time: "" },
-    { day: "수요일", time: "" },
-    { day: "목요일", time: "" },
-    { day: "금요일", time: "" },
-    { day: "토요일", time: "" },
-    { day: "일요일", time: "" },
+    { day: "월요일", time: "", close: false },
+    { day: "화요일", time: "", close: false },
+    { day: "수요일", time: "", close: false },
+    { day: "목요일", time: "", close: false },
+    { day: "금요일", time: "", close: false },
+    { day: "토요일", time: "", close: false },
+    { day: "일요일", time: "", close: false },
   ];
 
   const [time, setTime] = useState(timeArray);
-  const [sendTime, setSendTime]: any = useState([]);
+  const [sendAttachment, setSendAttachment] = useState("");
 
   const [pics, setPics] = useState<any>([]);
   const [imageArray, setImageArray]: any = useState([]);
   const [sendImageArray, setSendImageArray]: any = useState([]);
   const [bannerDisplayUri, setBannerDisplayUri] = useState("");
+
+  const [termsData, setTermsData]: any = useState({});
 
   const mapSelect = (item: ICategory) => ({ label: item.name, value: item.id });
 
@@ -89,12 +122,8 @@ const TableRegister = (props: ITableRegisterProps) => {
   }, [allCategory]);
 
   useEffect(() => {
-    for (let i = 0; i < timeArray.length; i++) {
-      let first = timeArray[i].day;
-      let second = timeArray[i].time;
-      sendTime.push(first + " " + second);
-    }
-  }, [time]);
+    saveTerms();
+  }, [terms]);
 
   const column = {
     1: "업체 카테고리 분류",
@@ -113,54 +142,6 @@ const TableRegister = (props: ITableRegisterProps) => {
     15: "편의시설 및 서비스",
     16: "홈페이지",
   };
-
-  const listOptionItem = [
-    {
-      name: "반려동물 동반가능",
-      value: "0",
-      category: "pet",
-    },
-    {
-      name: "유모차/휠체어",
-      value: "1",
-      category: "pet",
-    },
-    {
-      name: "키즈카페",
-      value: "2",
-      category: "pet",
-    },
-    {
-      name: "음식물 반입가능",
-      value: "3",
-      category: "pet",
-    },
-    {
-      name: "흡연실",
-      value: "4",
-      category: "pet",
-    },
-    {
-      name: "남/녀 화장실 구분",
-      value: "5",
-      category: "pet",
-    },
-    {
-      name: "수유실",
-      value: "6",
-      category: "pet",
-    },
-    {
-      name: "단체석",
-      value: "7",
-      category: "pet",
-    },
-    {
-      name: "무선인터넷",
-      value: "8",
-      category: "pet",
-    },
-  ];
 
   const getLocation = async () => {
     const currentAddr = textLocation;
@@ -188,11 +169,12 @@ const TableRegister = (props: ITableRegisterProps) => {
           id="input-search"
           value={textLocation}
           onChange={(e) => setTextLocation(e.target.value)}
+          placeholder="주소 입력 후 검색"
         />
         <Button style={{ marginLeft: "10px" }} variant="outlined" onClick={getLocation}>
           주소검색
         </Button>
-        <TextField size="small" style={{ width: "350px", marginLeft: "10px" }} value={locationData[0]?.formatted_address} onChange={() => setLocation(locationData[0]?.formatted_address)} required />
+        <TextField size="small" style={{ width: "380px", marginLeft: "10px" }} value={locationData[0]?.formatted_address} onChange={() => setLocation(locationData[0]?.formatted_address)} required />
         <TextField
           size="small"
           style={{ width: "350px", marginLeft: "10px" }}
@@ -206,29 +188,21 @@ const TableRegister = (props: ITableRegisterProps) => {
   };
 
   const uploadImageResource = async () => {
-    for await (const image of imageArray) {
-      const response = await StoreService.uploadImage(image);
-      sendImageArray.push(response?.data?.data?.image.key);
-    }
-    console.log(sendImageArray);
+    if (bannerUri === "") {
+      alert("배너 이미지를 필수는 등록해야합니다.");
+    } else {
+      for await (const image of imageArray) {
+        const response = await StoreService.uploadImage(image);
+        sendImageArray.push(response?.data?.data?.image.key);
+      }
 
-    if (sendImageArray !== "") {
-      uploadAttachment();
+      if (sendImageArray.length !== 0) {
+        uploadAttachment();
+      } else {
+        alert("배너 이미지를 제외하고 최소 1개의 이미지를 등록해야 합니다.");
+      }
     }
 
-    // try {
-    //   const response = await StoreService.uploadImage(formData);
-    //   if (response.data?.status === 201) {
-    //     imageArray.push(response?.data?.data?.image.key);
-    //     if (attachment !== "") {
-    //       uploadAttachment();
-    //     } else {
-    //       handleSubmit();
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
 
   const uploadAttachment = async () => {
@@ -239,53 +213,35 @@ const TableRegister = (props: ITableRegisterProps) => {
     try {
       const response = await StoreService.uploadFile(formData);
       if (response.data?.status === 201) {
+        setSendAttachment(response?.data?.data?.document.key);
+        console.log(response?.data?.data?.document.key);
+
         handleSubmit();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      alert("사업자 등록증을 첨부해주세요.");
     }
   };
 
-  const handleFileImages = (e: any) => {
-    setImageArray(e.target.files);
-  };
-
-  const isCheckboxChecked = (index: number, checked: boolean, name: string) => {
-    console.log(index, checked);
-
-    const zero = name === listOptionItem[0].name && `${name}${checked}` === `${name}true` ? true : false;
-    const one = name === listOptionItem[1].name && `${name}${checked}` === `${name}true` ? true : false;
-    const two = name === listOptionItem[2].name && `${name}${checked}` === `${name}true` ? true : false;
-    const three = name === listOptionItem[3].name && `${name}${checked}` === `${name}true` ? true : false;
-    const four = name === listOptionItem[4].name && `${name}${checked}` === `${name}true` ? true : false;
-    const five = name === listOptionItem[5].name && `${name}${checked}` === `${name}true` ? true : false;
-    const six = name === listOptionItem[6].name && `${name}${checked}` === `${name}true` ? true : false;
-    const seven = name === listOptionItem[7].name && `${name}${checked}` === `${name}true` ? true : false;
-    const eight = name === listOptionItem[8].name && `${name}${checked}` === `${name}true` ? true : false;
-
-    setTerms({
-      "반려동물 동반가능": zero,
-      "유모차/휠체어": one,
-      키즈카페: two,
-      "음식물 반입가능": three,
-      흡연실: four,
-      "남/녀 화장실 구분": five,
-      수유실: six,
-      단체석: seven,
-      무선인터넷: eight,
+  const saveTerms = () => {
+    setTermsData({
+      "반려동물 동반가능": terms[0],
+      "유모차/휠체어": terms[1],
+      키즈카페: terms[2],
+      "음식물 반입가능": terms[3],
+      흡연실: terms[4],
+      "남/녀 화장실 구분": terms[5],
+      수유실: terms[6],
+      단체석: terms[7],
+      무선인터넷: terms[8],
     });
   };
-
-  for (let i = 0; i < timeArray.length; i++) {
-    let first = timeArray[i].day;
-    let second = timeArray[i].time;
-    sendTime.push(first + " " + second);
-  }
 
   const handleSubmit = async () => {
     const formData: any = new FormData();
     const categories: any = [];
-    const termsInput = JSON.stringify(terms);
+    const termsInput = JSON.stringify(termsData);
+    const timeInput = JSON.stringify(time);
 
     categories.push(refSelectWho?.current?.value, refSelectHowTwo?.current?.value, refSelectWhereTwo?.current?.value);
 
@@ -297,12 +253,12 @@ const TableRegister = (props: ITableRegisterProps) => {
     formData.append("businessNumber", businessNumber);
     formData.append("contact", contact);
     formData.append("contactAdditional", contactPlus);
-    formData.append("location", locationData[0]?.formatted_address + " " + locationDetail);
-    formData.append("attachment", attachment);
+    formData.append("location", locationData[0]?.formatted_address);
+    formData.append('locationDetail', locationDetail)
+    formData.append("attachment", sendAttachment);
     formData.append("lat", geometry.lat);
     formData.append("lng", geometry.lng);
-    formData.append("time", sendTime.join(","));
-    formData.append("closed", ["월요일", "화요일"].join(","));
+    formData.append("time", timeInput);
     formData.append("workerDescription", workerDescription);
     formData.append("description", description);
     formData.append("limitAge", limitAge);
@@ -325,7 +281,29 @@ const TableRegister = (props: ITableRegisterProps) => {
     } catch (error: any) {
       if (error?.response.data) {
         console.log(error?.response.data);
+
+        if (error?.response.data?.errorCode === 9003) {
+          alert("카페고리 선택은 필수입니다.");
+        }
+        // if (error.response.data.message.includes() == "lng must not be less than 125") {
+        //   alert("한국 내의 업체만 등록할수 있습니다.");
+        // }
+
+        // if the error message is one of followings, it return a right message
+
+        error.response.data.message.map((message: string) => {
+          if (message === "businessNumber must be a number string") {
+            alert("사업자 등록번호는 숫자만 입력해주세요.");
+          } else if (message === "lat must not be less than 33") {
+            alert("한국 내의 업체만 등록할수 있습니다.");
+          } else if (message === "limitAge must not be less than 0") {
+            alert("연령 제한은 0세 이상이어야 합니다.");
+          } else if (message === "freeAge must not be less than 0") {
+            alert("무료연령은 0세 이상이어야 합니다.");
+          }
+        });
       }
+
       if (error?.response.data?.errorCode === 4006) {
         alert("해당 업체관리자 ID의 스토어는 이미 등록되어있습니다.");
       }
@@ -374,6 +352,10 @@ const TableRegister = (props: ITableRegisterProps) => {
     setListTypeWhereTwo(tempData);
   };
 
+  const handleCloseTimeChange = (e: any, index: number) => {
+    setTime((prev: any) => prev.map((el: any, idx: number) => (idx === index ? { ...el, close: e.target?.checked } : el)));
+  };
+
   return (
     <div className="container">
       <h3 className="modal-h3">업체 등록</h3>
@@ -390,7 +372,7 @@ const TableRegister = (props: ITableRegisterProps) => {
               <div style={{ display: "flex", marginLeft: "20px" }}>
                 <Card style={{ margin: "0 10px", display: "flex" }}>
                   <label htmlFor="banner" style={{ cursor: "pointer" }}>
-                    <CardMedia component="img" height="150" width="220" alt="배너를 업로드해주세요.(필수)" image={bannerDisplayUri} />
+                    <CardMedia component="img" height="150" width="220" style={{ lineHeight: "150px" }} alt="배너를 업로드해주세요.(필수)" image={bannerDisplayUri} />
                   </label>
                   <input
                     accept="image/*"
@@ -439,7 +421,7 @@ const TableRegister = (props: ITableRegisterProps) => {
             </TableCell>
             <TableCell style={{ display: "flex" }}>
               <div className="app-select">
-                <AppSelect ref={refSelectWho} value={"default"} listMenu={listTypeWho} />
+                <AppSelect ref={refSelectWho} value={"4"} listMenu={listTypeWho} />
               </div>
             </TableCell>
           </TableRow>
@@ -449,7 +431,7 @@ const TableRegister = (props: ITableRegisterProps) => {
             </TableCell>
             <TableCell style={{ display: "flex" }}>
               <div className="app-select" onClick={() => setIsPrimaryHow(true)}>
-                <NewAppSelect ref={refSelectHowOne} value={"default"} listMenu={listTypeHow} onChange={pickSecondaryHow} />
+                <NewAppSelect ref={refSelectHowOne} value={"8"} listMenu={listTypeHow} onChange={pickSecondaryHow} />
               </div>
               {isPrimaryHow && listTypeHowTwo.length !== 0 && (
                 <div className="app-select">
@@ -465,7 +447,7 @@ const TableRegister = (props: ITableRegisterProps) => {
             </TableCell>
             <TableCell style={{ display: "flex" }}>
               <div className="app-select" onClick={() => setIsPrimaryWhere(true)}>
-                <NewAppSelect ref={refSelectWhereOne} value={"default"} listMenu={listTypeWhere} onChange={pickSecondaryWhere} />
+                <NewAppSelect ref={refSelectWhereOne} value={"140"} listMenu={listTypeWhere} onChange={pickSecondaryWhere} />
               </div>
               {isPrimaryWhere && listTypeWhereTwo.length !== 0 && (
                 <div className="app-select">
@@ -489,6 +471,7 @@ const TableRegister = (props: ITableRegisterProps) => {
                 name=""
                 type=""
                 id="input-search"
+                placeholder="상호명을 입력해주세요."
               />
             </TableCell>
           </TableRow>
@@ -507,6 +490,7 @@ const TableRegister = (props: ITableRegisterProps) => {
                 name=""
                 type=""
                 id="input-search"
+                placeholder="업체관리자의 ID를 입력해주세요."
               />
             </TableCell>
           </TableRow>
@@ -516,16 +500,17 @@ const TableRegister = (props: ITableRegisterProps) => {
             <TableCell variant="head">{column[4]}</TableCell>
             <TableCell style={{ display: "flex", alignItems: "center" }}>
               <TextField
+                required
                 size="small"
                 className="input-text-search"
                 margin="normal"
                 onChange={(e) => setBusinessNumber(e.target.value)}
                 value={businessNumber}
-                required
                 fullWidth
                 name=""
-                type=""
+                type="number"
                 id="input-search"
+                placeholder="사업자 등록번호를 입력해주세요."
               />
               <Button style={{ marginLeft: "10px" }} variant="outlined">
                 <input type="file" id="input-file" multiple style={{ display: "none" }} onChange={handleAttachment} />
@@ -537,7 +522,19 @@ const TableRegister = (props: ITableRegisterProps) => {
           <TableRow>
             <TableCell variant="head">{column[5]}</TableCell>
             <TableCell>
-              <TextField size="small" className="input-text-search" margin="normal" onChange={(e) => setContact(e.target.value)} value={contact} required fullWidth name="" type="" id="input-search" />
+              <TextField
+                size="small"
+                className="input-text-search"
+                margin="normal"
+                onChange={(e) => setContact(e.target.value)}
+                value={contact}
+                required
+                fullWidth
+                name=""
+                type=""
+                id="input-search"
+                placeholder="대표 연락처를 입력해주세요."
+              />
             </TableCell>
           </TableRow>
           {/* contact2 */}
@@ -555,6 +552,8 @@ const TableRegister = (props: ITableRegisterProps) => {
                 name=""
                 type=""
                 id="input-search"
+                placeholder="추가 연락처를 입력해주세요.(선택)"
+                style={{ width: '300px'}}
               />
             </TableCell>
           </TableRow>
@@ -562,6 +561,23 @@ const TableRegister = (props: ITableRegisterProps) => {
           <TableRow>
             <TableCell variant="head">{column[7]}</TableCell>
             {handleGeocoding()}
+          </TableRow>
+          
+          {/* time */}
+          <TableRow>
+            <TableCell variant="head">{column[8]}</TableCell>
+            <TableCell>
+              <div style={{ display: "flex", flexWrap: "wrap", width: "700px" }}>
+                {time.map((el: any, index: number) => (
+                  <div key={index} style={{ marginRight: "18px", marginBottom: "10px" }}>
+                    <span style={{ marginRight: "20px" }}>{el.day}</span>
+                    <input value={el.time} onChange={(e) => handleTimeChange(e, index)} placeholder="ex)00:00-12:00" />
+                    <input type="checkbox" id="closed" value={""} onChange={(e) => handleCloseTimeChange(e, index)} style={{ marginLeft: "10px" }} checked={Boolean(el.close)} />
+                    <label htmlFor="closed"> 휴무</label>
+                  </div>
+                ))}
+              </div>
+            </TableCell>
           </TableRow>
           {/* workerDescription */}
           <TableRow>
@@ -582,21 +598,7 @@ const TableRegister = (props: ITableRegisterProps) => {
               />
             </TableCell>
           </TableRow>
-          {/* time */}
-          <TableRow>
-            <TableCell variant="head">{column[8]}</TableCell>
-            <TableCell>
-              <div style={{ display: "flex", flexWrap: "wrap", width: "700px" }}>
-                {time.map((el: any, index: number) => (
-                  <div key={index} style={{ marginRight: "18px", marginBottom: "10px" }}>
-                    <span style={{ marginRight: "20px" }}>{el.day}</span>
-                    <input value={el.time} onChange={(e) => handleTimeChange(e, index)} placeholder="ex)00:00-12:00" />
-                  </div>
-                ))}
-              </div>
-            </TableCell>
-          </TableRow>
-          {/* workerDescription */}
+          {/* description */}
           <TableRow>
             <TableCell variant="head">{column[12]}</TableCell>
             <TableCell>
@@ -653,33 +655,16 @@ const TableRegister = (props: ITableRegisterProps) => {
               세 미만
             </TableCell>
           </TableRow>
-          {/* facilities */}
+          {/* terms */}
           <TableRow>
             <TableCell variant="head">{column[15]}</TableCell>
             <TableCell style={{ display: "flex", alignItems: "center" }}>
-              {listOptionItem.map((checkbox, index) => {
-                return (
-                  <FormControlLabel
-                    key={index + checkbox.name}
-                    className="twocolelement"
-                    control={
-                      <Checkbox
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => isCheckboxChecked(index, e.target.checked, checkbox.name)}
-                        name={checkbox.name}
-                        value={checkbox.value}
-                        id={checkbox.category}
-                        color="primary"
-                      />
-                    }
-                    label={<Typography className="checkboxTypo">{checkbox.name}</Typography>}
-                  />
-                );
-              })}
+              <TermsChildren setTerms={setTerms} />
             </TableCell>
           </TableRow>
           {/* Homepage */}
           <TableRow>
-            <TableCell variant="head">{column[13]}</TableCell>
+            <TableCell variant="head">{column[16]}</TableCell>
             <TableCell style={{ display: "flex", alignItems: "center" }}>
               <TextField
                 size="small"
@@ -698,7 +683,7 @@ const TableRegister = (props: ITableRegisterProps) => {
           </TableRow>
         </Table>
         <div className="button-container">
-          <Button variant="contained" className="button" style={{ width: "150px", marginLeft: "10px" }} onClick={uploadImageResource}>
+          <Button variant="contained" className="button" style={{ width: "150px", marginLeft: "10px", marginTop: "20px" }} onClick={uploadImageResource}>
             업체등록
           </Button>
           <Button variant="outlined" className="button" style={{ width: "150px", marginLeft: "10px" }} onClick={() => navigate(-1)}>

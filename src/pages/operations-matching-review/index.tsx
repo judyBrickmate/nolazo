@@ -9,6 +9,7 @@ import { COLOR } from "../../utils";
 import MatchReviewList from "./component/MatchReviewList";
 
 export default function OperationsMatchingReview() {
+  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("default");
   const refRangeDate = useRef<any>(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -25,28 +26,16 @@ export default function OperationsMatchingReview() {
 
   const getMatchReview = async () => {
     try {
-      const startDate = moment(refRangeDate.current?.startDate)
-        .add(1, "days")
-        .toISOString();
+      setLoading(true);
+      const startDate = moment(refRangeDate.current?.startDate).add(1, "days").toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
       const statusData = refSelect.current.value;
 
-      const filters =
-        refSelect.current.value !== "default"
-          ? [`${refSelect.current.value}=${textFilter}`]
-          : [`default=${textFilter}`];
+      const filters = refSelect.current.value !== "default" ? [`${refSelect.current.value}=${textFilter}`] : [`default=${textFilter}`];
 
       const filter = filters.filter((column) => column).join(",");
 
-      const response = await OperationService.getMatchReviewList(
-        startDate,
-        endDate,
-        true,
-        pageNumber,
-        10,
-        filter,
-        "MATCH"
-      );
+      const response = await OperationService.getMatchReviewList(startDate, endDate, true, pageNumber, 10, filter, "MATCH");
 
       if (response.status === 200) {
         setMatchReview(response.data?.data?.items);
@@ -58,12 +47,10 @@ export default function OperationsMatchingReview() {
         alert("YYYY-MM-DD와 같은 날짜방식으로 입력하세요.");
       }
     }
+    setLoading(false);
   };
 
-  const handleChangePage = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
   };
 
@@ -91,8 +78,8 @@ export default function OperationsMatchingReview() {
     { label: "구분", value: "default" },
     { label: "매칭방번호", value: "matchingId" },
     { label: "매칭방매니저", value: "name" },
-    { label: "매칭방 이름", value: "matchName" },
-    { label: "작성자", value: "reviwer" },
+    { label: "매칭방 이름", value: "title" },
+    { label: "작성자", value: "reviewer" },
     { label: "평점", value: "rating" },
   ];
 
@@ -126,25 +113,14 @@ export default function OperationsMatchingReview() {
             placeholder="검색어를 입력하세요."
           />
         </div>
-        <Button
-          variant="contained"
-          sx={{ ml: 2, pt: "9px", pb: "9px" }}
-          onClick={getMatchReview}
-        >
+        <Button variant="contained" sx={{ ml: 2, pt: "9px", pb: "9px" }} onClick={getMatchReview}>
           검색
         </Button>
       </Box>
 
       <Box sx={{ mt: 4 }}>
-        {totalPage > 1 && (
-          <Pagination
-            count={totalPage}
-            shape="rounded"
-            sx={{ mb: 1 }}
-            onChange={handleChangePage}
-          />
-        )}
-        <MatchReviewList matchReview={matchReview} />
+        {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
+        <MatchReviewList matchReview={matchReview} loading={loading} />
         {renderEmpty()}
       </Box>
     </div>

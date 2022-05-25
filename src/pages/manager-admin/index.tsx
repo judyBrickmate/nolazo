@@ -13,6 +13,7 @@ import { useAppSelector } from "../../redux/hook";
 import { USER_ROLE } from "../../helpers/storage";
 
 export default function ManagerMember() {
+  const [loading, setLoading] = useState(false);
   const userInfo = useAppSelector((state) => state.user.user);
   const [userRole, setUserRole] = useState<any>("");
   const [status, setStatus] = useState("default");
@@ -41,6 +42,7 @@ export default function ManagerMember() {
 
   const getMember = async () => {
     try {
+      setLoading(true);
       const startDate = moment("2022/01/01").toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
       const fieldSearch = refSelect.current?.value;
@@ -66,6 +68,7 @@ export default function ManagerMember() {
         alert("구분은 [총괄관리자, 일반관리자, 업체관리자]중 하나로 입력해주세요");
       }
     }
+    setLoading(false);
   };
 
   const renderEmpty = () => {
@@ -151,7 +154,7 @@ export default function ManagerMember() {
       </Box>
       <Box sx={{ mt: 4 }}>
         {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
-        <TableMember listUser={listUser} getMember={getMember} userRole={userRole} />
+        <TableMember listUser={listUser} getMember={getMember} userRole={userRole} loading={loading} />
         {renderEmpty()}
       </Box>
       {openRegister && <RegisterModal setOpenRegister={setOpenRegister} getMember={getMember} pageNumber={pageNumber} />}

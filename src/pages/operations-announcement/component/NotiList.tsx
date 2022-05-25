@@ -1,4 +1,4 @@
-import { Box, Button, Collapse, IconButton, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, Button, CircularProgress, Collapse, IconButton, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useState } from "react";
@@ -6,7 +6,7 @@ import { OperationService } from "../../../services";
 import moment from "moment";
 
 export default function NotiList(props: any) {
-  const { notiList } = props;
+  const { notiList, loading } = props;
 
   const column = ["No.", "공지제목", "작성자", "공지일자", ""];
 
@@ -23,6 +23,8 @@ export default function NotiList(props: any) {
               ))}
             </TableRow>
           </TableHead>
+          {loading && <CircularProgress />}
+
           <TableBody>
             {notiList.map((row: any, index: number) => (
               <Row key={index} row={row} index={index} length={notiList.length} />

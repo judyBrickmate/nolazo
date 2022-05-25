@@ -1,4 +1,4 @@
-import { Button, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Button, CircularProgress, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import moment from "moment";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
@@ -9,7 +9,7 @@ import { COLOR } from "../../../utils";
 import TableUserDetail from "./TableUserDetail";
 
 export default function TableMember(props: any) {
-  const { listUser, getMember } = props;
+  const { listUser, getMember, loading } = props;
   const [isBlocked, setIsBlocked] = React.useState(false);
   const navigate = useNavigate();
 
@@ -55,6 +55,7 @@ export default function TableMember(props: any) {
               ))}
             </TableRow>
           </TableHead>
+          {loading && <CircularProgress />}
           <TableBody>
             {listUser.map((row: any) => (
               <TableRow key={row.id}>
@@ -69,7 +70,7 @@ export default function TableMember(props: any) {
                 </TableCell>
                 <TableCell align="center">{row.phone}</TableCell>
                 <TableCell align="center">{row.status}</TableCell>
-                <TableCell align="center">{moment(row.createdAt).format("YYYY-MM-DD hh:mm:ss")}</TableCell>
+                <TableCell align="center">{moment(row.createdAt).format("YYYY-MM-DD HH:mm:ss")}</TableCell>
                 <TableCell scope="row" align="center">
                   <Button variant="contained">
                     <Link to={ROUTER.MANABER_MEMBER_DETAIL_ORDER} state={{ id: row.id }} style={{ textDecoration: "none", color: COLOR.WHITE }}>

@@ -1,12 +1,4 @@
-import {
-  Button,
-  Container,
-  FormControlLabel,
-  Pagination,
-  Radio,
-  RadioGroup,
-  TextField,
-} from "@mui/material";
+import { Button, Container, FormControlLabel, Pagination, Radio, RadioGroup, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -17,6 +9,7 @@ import { COLOR } from "../../utils";
 import TableTicket from "./component/TableTicket";
 
 export default function ReservationTicket() {
+  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("default");
   const refRangeDate = useRef<any>(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -33,31 +26,19 @@ export default function ReservationTicket() {
 
   const getTicket = async () => {
     try {
-      const startDate = moment(refRangeDate.current?.startDate)
-        .add(1, "days")
-        .toISOString();
+      setLoading(true);
+      const startDate = moment(refRangeDate.current?.startDate).add(1, "days").toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
       const fieldSearch = refSelect.current?.value;
       const statusData = refSelect.current?.value;
 
-      const filters =
-        refSelect.current.value !== "default"
-          ? [`${refSelect.current.value}=${textFilter}`]
-          : [`default=${textFilter}`];
+      const filters = refSelect.current.value !== "default" ? [`${refSelect.current.value}=${textFilter}`] : [`default=${textFilter}`];
 
       if (status !== "default") filters.push(`status=${status}`);
 
       const filter = filters.filter((column) => column).join(",");
 
-      const response = await PaymentService.getReservation(
-        startDate,
-        endDate,
-        pageNumber,
-        10,
-        true,
-        filter,
-        "STORE"
-      );
+      const response = await PaymentService.getReservation(startDate, endDate, pageNumber, 10, true, filter, "STORE");
       if (response.status === 200) {
         setListTicket(response.data?.data?.items);
         setTotalPage(response.data?.data.meta?.totalPages);
@@ -67,12 +48,10 @@ export default function ReservationTicket() {
         alert("YYYY-MM-DD와 같은 날짜방식으로 입력하세요.");
       }
     }
+    setLoading(false);
   };
 
-  const handleChangePage = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
   };
 
@@ -138,24 +117,13 @@ export default function ReservationTicket() {
             placeholder="검색어를 입력하세요."
           />
         </div>
-        <Button
-          variant="contained"
-          sx={{ ml: 2, pt: "9px", pb: "9px" }}
-          onClick={getTicket}
-        >
+        <Button variant="contained" sx={{ ml: 2, pt: "9px", pb: "9px" }} onClick={getTicket}>
           검색
         </Button>
       </Box>
       <Box sx={{ mt: 4 }}>
-        {totalPage > 1 && (
-          <Pagination
-            count={totalPage}
-            shape="rounded"
-            sx={{ mb: 1 }}
-            onChange={handleChangePage}
-          />
-        )}
-        <TableTicket listTicket={listTicket} />
+        {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
+        <TableTicket listTicket={listTicket} loading={loading} />
         {renderEmpty()}
       </Box>
     </div>

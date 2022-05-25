@@ -9,6 +9,7 @@ import { COLOR } from "../../utils";
 import NotiList from "./component/NotiList";
 
 export default function OperationsAnnouncement() {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const refRangeDate = useRef<any>(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -51,6 +52,7 @@ export default function OperationsAnnouncement() {
 
   const getNotiList = async () => {
     try {
+      setLoading(true);
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
       const statusData = refSelect.current.value;
@@ -67,9 +69,12 @@ export default function OperationsAnnouncement() {
         setNotiList(noticeList);
         setTotalPage(response.data?.data.meta?.totalPages);
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error?.response?.data.errorCode === 11010) {
+        alert("YYYY-MM-DD와 같은 날짜방식으로 입력하세요.");
+      }
     }
+    setLoading(false);
   };
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -110,7 +115,7 @@ export default function OperationsAnnouncement() {
         </Button>
       </Box>
       <Box sx={{ mt: 4 }}>
-        <NotiList notiList={notiList} />
+        <NotiList notiList={notiList} loading={loading} />
         {renderEmpty()}
         {totalPage > 1 && (
           <Pagination

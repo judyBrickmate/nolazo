@@ -1,14 +1,4 @@
-import {
-  Button,
-  Paper,
-  StyledEngineProvider,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Button, CircularProgress, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import moment from "moment";
 import React from "react";
 import { useNavigate } from "react-router";
@@ -17,7 +7,7 @@ import { ROUTER } from "../../../router/routes";
 import { COLOR } from "../../../utils";
 
 function TableNotice(props: any) {
-  const { listNotice } = props;
+  const { listNotice, loading } = props;
 
   const column = ["알람번호", "알림일자", "제목", "매칭방명", "내용"];
 
@@ -34,6 +24,7 @@ function TableNotice(props: any) {
               ))}
             </TableRow>
           </TableHead>
+          {loading && <CircularProgress />}
           <TableBody>
             {listNotice.map((row: any) => (
               <TableRow key={row.id}>
@@ -41,9 +32,7 @@ function TableNotice(props: any) {
                   {row.id}
                 </TableCell>
 
-                <TableCell align="center">
-                  {moment(row.createdAt).format("YYYY-MM-DD hh:mm:ss")}
-                </TableCell>
+                <TableCell align="center">{moment(row.createdAt).format("YYYY-MM-DD hh:mm:ss")}</TableCell>
 
                 <TableCell scope="row" align="center">
                   {row.title}

@@ -1,17 +1,4 @@
-import {
-  Box,
-  Button,
-  Pagination,
-  Paper,
-  StyledEngineProvider,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Pagination, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from "@mui/material";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
@@ -39,14 +26,7 @@ export default function TablePrimary(props: any) {
   useEffect(() => {
     getCategory();
   }, [pageNumber]);
-  const column = [
-    "No",
-    "카테고리명",
-    "카테고리 코드",
-    "공개여부",
-    "등록일",
-    "관리",
-  ];
+  const column = ["No", "카테고리명", "카테고리 코드", "공개여부", "등록일", "관리"];
 
   const getCategory = async () => {
     try {
@@ -54,19 +34,8 @@ export default function TablePrimary(props: any) {
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
 
-      const filters: [string] =
-        refSelect.current.value !== "default"
-          ? [`${refSelect.current.value}=${textFilter},layer=primary`]
-          : [`default=${textFilter},layer=primary`];
-      const response = await CategoryService.getCategoryList(
-        "WHO",
-        "2022-01-01",
-        endDate,
-        true,
-        pageNumber,
-        10,
-        filters
-      );
+      const filters: [string] = refSelect.current.value !== "default" ? [`${refSelect.current.value}=${textFilter},layer=primary`] : [`default=${textFilter},layer=primary`];
+      const response = await CategoryService.getCategoryList("WHO", "2022-01-01", endDate, true, pageNumber, 10, filters);
 
       if (response.status === 200) {
         setListCategory(response.data?.data?.items);
@@ -77,6 +46,7 @@ export default function TablePrimary(props: any) {
         alert("YYYY-MM-DD와 같은 날짜방식으로 입력하세요.");
       }
     }
+    setLoading(false);
   };
 
   //   if (primaryCategory.length > 5) {
@@ -102,10 +72,7 @@ export default function TablePrimary(props: any) {
     }
   };
 
-  const handleChangePage = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
   };
 
@@ -156,38 +123,18 @@ export default function TablePrimary(props: any) {
             placeholder="검색어를 입력하세요."
           />
         </div>
-        <Button
-          variant="contained"
-          sx={{ ml: 2, pt: "9px", pb: "9px" }}
-          onClick={getCategory}
-        >
+        <Button variant="contained" sx={{ ml: 2, pt: "9px", pb: "9px" }} onClick={getCategory}>
           검색
         </Button>
-        <Button
-          variant="outlined"
-          size="large"
-          style={{ marginLeft: "20px" }}
-          onClick={openRegisterModal}
-        >
+        <Button variant="outlined" size="large" style={{ marginLeft: "20px" }} onClick={openRegisterModal}>
           누구랑 카테고리 등록
         </Button>
       </Box>
       <Box sx={{ mt: 4 }}>
-        {totalPage > 1 && (
-          <Pagination
-            count={totalPage}
-            shape="rounded"
-            sx={{ mb: 1 }}
-            onChange={handleChangePage}
-          />
-        )}
+        {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
         <StyledEngineProvider injectFirst>
           <TableContainer component={Paper}>
-            <Table
-              sx={{ minWidth: 700 }}
-              size="small"
-              aria-label="customized table"
-            >
+            <Table sx={{ minWidth: 700 }} size="small" aria-label="customized table">
               <TableHead>
                 <TableRow>
                   {column.map((item, index) => (
@@ -198,6 +145,7 @@ export default function TablePrimary(props: any) {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {loading && <CircularProgress />}
                 {listCategory.map((row: any, index) => (
                   <TableRow key={row.id} className="table_row">
                     <TableCell align="center" component="th" scope="row">
@@ -206,14 +154,9 @@ export default function TablePrimary(props: any) {
                     <TableCell align="center">{row.name}</TableCell>
                     <TableCell align="center">{row.id}</TableCell>
                     <TableCell align="center">{row.isActive}</TableCell>
-                    <TableCell align="center">
-                      {moment(row.createdAt).format("YYYY-MM-DD hh:mm")}
-                    </TableCell>
+                    <TableCell align="center">{moment(row.createdAt).format("YYYY-MM-DD hh:mm")}</TableCell>
                     <TableCell scope="row" align="center">
-                      <Button
-                        variant="outlined"
-                        onClick={() => handleClickEdit(row)}
-                      >
+                      <Button variant="outlined" onClick={() => handleClickEdit(row)}>
                         수정
                       </Button>
                     </TableCell>
@@ -222,15 +165,7 @@ export default function TablePrimary(props: any) {
               </TableBody>
             </Table>
           </TableContainer>
-          {openEdit && (
-            <EditCategoryModal
-              categoryData={categoryData}
-              setOpenEdit={setOpenEdit}
-              getCategory={getCategory}
-              listCategory={listCategory}
-              allCategories={allCategories}
-            />
-          )}
+          {openEdit && <EditCategoryModal categoryData={categoryData} setOpenEdit={setOpenEdit} getCategory={getCategory} listCategory={listCategory} allCategories={allCategories} />}
         </StyledEngineProvider>
         {openRegister && (
           <RegisterCategoryModal

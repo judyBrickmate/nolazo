@@ -1,19 +1,21 @@
+
 import { Button, Container, FormControlLabel, Pagination, Radio, RadioGroup, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
-import AppSelect from "../../component/app-select/AppSelect";
-import { UserService } from "../../services";
-import { UserStatus, USER_STATUS } from "../../utils";
-import TableMember from "../manager-member/component/TableMember";
-import { useLocation } from "react-router-dom";
-import TableOrderDetail from "./pages/TableOrderDetail";
+import AppSelect from '../../component/app-select/AppSelect';
+import { UserService } from '../../services';
+import { UserStatus, USER_STATUS } from '../../utils';
+import TableMember from '../manager-member/component/TableMember';
+import { useLocation } from 'react-router-dom';
+import TableOrderDetail from './pages/TableOrderDetail';
 import { ROUTER } from "../../router/routes";
 import PageNotFound from "../../router/PageNotFound";
 import TableMatchingDetail from "./pages/TableMatchingDetail";
 import SearchBar from "./component/SearchBar";
 import TableStoreReviewDetail from "./pages/TableStoreReviewDetail";
 import TableMatchingReviewDetail from "./pages/TableMatchingReviewDetail";
+
 
 type LocationState = {
   id: number;
@@ -219,8 +221,10 @@ export default function ManagerMemberDetail() {
             textFilter={textFilter}
             setTextFilter={setTextFilter}
           />
-
-          <TableMatchingDetail userMatchingData={userMatchingData} />
+          <Box sx={{ mt: 4 }}>
+            {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
+            <TableMatchingDetail userMatchingData={userMatchingData} />
+          </Box>
         </>
       );
     } else if (location.pathname === ROUTER.MANABER_MEMBER_DETAIL_STORE_REVIEW) {
@@ -236,7 +240,10 @@ export default function ManagerMemberDetail() {
             textFilter={textFilter}
             setTextFilter={setTextFilter}
           />
-          <TableStoreReviewDetail userStoreReview={userStoreReview} />
+          <Box sx={{ mt: 4 }}>
+            {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
+            <TableStoreReviewDetail userStoreReview={userStoreReview} />
+          </Box>
         </>
       );
     } else if (location.pathname === ROUTER.MANABER_MEMBER_DETAIL_MATCHING_REVIEW) {
@@ -251,7 +258,10 @@ export default function ManagerMemberDetail() {
             textFilter={textFilter}
             setTextFilter={setTextFilter}
           />
-          <TableMatchingReviewDetail userMatchingReview={userMatchingReview} />
+          <Box sx={{ mt: 4 }}>
+            {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
+            <TableMatchingReviewDetail userMatchingReview={userMatchingReview} />
+          </Box>
         </>
       );
     }

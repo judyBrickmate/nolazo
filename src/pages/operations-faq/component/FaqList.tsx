@@ -1,17 +1,18 @@
-import { Box, Button, CardMedia, Collapse, IconButton, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableRow, TextareaAutosize } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useState } from 'react';
-import { UserService } from '../../../services';
+import { Box, Button, CardMedia, CircularProgress, Collapse, IconButton, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableRow, TextareaAutosize } from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { useState } from "react";
+import { UserService } from "../../../services";
 
 export default function FaqList(props: any) {
-  const { faqList } = props;
+  const { faqList, loading } = props;
 
   return (
     <StyledEngineProvider injectFirst>
-      <TableContainer component={Paper} style={{ marginTop: '60px' }}>
+      <TableContainer component={Paper} style={{ marginTop: "60px" }}>
         <Table sx={{ minWidth: 700 }} aria-label="collapsible table">
           <TableBody>
+            {loading && <CircularProgress />}
             {faqList.map((row: any, index: number) => (
               <Row key={index} row={row} />
             ))}
@@ -34,16 +35,16 @@ function Row(props: any) {
   const submitAnswer = async () => {
     try {
       if (!answer) {
-        alert('내용을 입력해주세요');
+        alert("내용을 입력해주세요");
         return;
       }
       if (answer?.length < 10) {
-        alert('내용은 10자 이상으로 입력해주세요');
+        alert("내용은 10자 이상으로 입력해주세요");
         return;
       }
       const response = await UserService.submitAnswer(row.userId, row.id, answer);
       if (response.status === 204) {
-        alert('답변이 등록되었습니다');
+        alert("답변이 등록되었습니다");
         location.reload();
       }
     } catch (e: any) {
@@ -81,7 +82,7 @@ function Row(props: any) {
                       내용
                     </TableCell>
                     <TableCell>
-                      <CardMedia component="img" style={{ width: 'auto' }} image={row.image?.thumbnail} alt="No image" />
+                      <CardMedia component="img" style={{ width: "auto" }} image={row.image?.thumbnail} alt="No image" />
                       {row.content}
                     </TableCell>
                   </TableRow>
@@ -95,11 +96,11 @@ function Row(props: any) {
                       ) : (
                         <div
                           style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
+                            display: "flex",
+                            justifyContent: "space-between",
                           }}
                         >
-                          <TextareaAutosize value={answer || ''} onChange={handleChange} />
+                          <TextareaAutosize value={answer || ""} onChange={handleChange} />
                           <Button variant="outlined" size="large" onClick={submitAnswer}>
                             답변달기
                           </Button>

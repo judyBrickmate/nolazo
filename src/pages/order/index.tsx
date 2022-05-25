@@ -9,6 +9,7 @@ import TableOrder from "./component/TableOrder";
 import { PaymentService } from "../../services";
 
 export default function Order() {
+  const [loading, setLoading] = useState(false);
   const [orderStatus, setOrderStatus] = useState("default");
   const [listOrder, setListOrder] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
@@ -27,6 +28,7 @@ export default function Order() {
 
   const getOrder = async () => {
     try {
+      setLoading(true);
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
 
@@ -67,6 +69,7 @@ export default function Order() {
         alert("숫자를 입력하세요.");
       }
     }
+    setLoading(false);
   };
 
   const handleChangePage = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -178,7 +181,7 @@ export default function Order() {
       </Box>
       <Box sx={{ mt: 4 }}>
         {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
-        <TableOrder listOrder={listOrder} />
+        <TableOrder listOrder={listOrder} loading={loading} />
         {renderEmpty()}
       </Box>
     </div>

@@ -11,6 +11,7 @@ import "./styles.scss";
 import Enum from "../../utils/enum";
 
 export default function ManagerMember() {
+  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("default");
   const [userStatus, setUserStatus] = useState("default");
   const refRangeDate = useRef<any>(null);
@@ -29,6 +30,7 @@ export default function ManagerMember() {
 
   const getMember = async () => {
     try {
+      setLoading(true);
       const startDate = moment(refRangeDate.current?.startDate).toISOString();
       const endDate = moment(refRangeDate.current?.endDate).toISOString();
       const fieldSearch = refSelect.current.value;
@@ -53,6 +55,7 @@ export default function ManagerMember() {
         console.log(error);
       }
     }
+    setLoading(false);
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,7 +150,7 @@ export default function ManagerMember() {
       </Box>
       <Box sx={{ mt: 4 }}>
         {totalPage > 1 && <Pagination count={totalPage} shape="rounded" sx={{ mb: 1 }} onChange={handleChangePage} />}
-        <TableMember listUser={listUser} getMember={getMember} />
+        <TableMember listUser={listUser} getMember={getMember} loading={loading} />
         {renderEmpty()}
       </Box>
     </div>

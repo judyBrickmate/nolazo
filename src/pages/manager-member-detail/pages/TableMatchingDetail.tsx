@@ -18,7 +18,7 @@ export default function TableMatchingDetail(props: any) {
 
   const { id } = location.state as LocationState;
 
-  const column = ["매칭번호", "매칭방명", "매칭방매니저", "업체명", "상품명", "결제금액", "결제상태", "매칭일자"];
+  const column = ["매칭번호", "매칭방명", "매칭방매니저", "업체명", "상품명", "상품금액", "매칭상태", "매칭일자"];
 
   useEffect(() => {
     getUserName();

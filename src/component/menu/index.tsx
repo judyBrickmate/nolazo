@@ -115,7 +115,15 @@ export default function Menu() {
     <Box sx={{ display: "flex" }}>
       <MuiDrawer variant="permanent">
         <Box style={{ display: "flex", height: "150px", justifyContent: "center", alignItems: "center" }}>
-          <img style={{ width: "120px", height: "42px" }} src={Logo} />
+          {localStorage.getItem("USER_ROLE") === "업체관리자" ? (
+            <Link to="/store-owner-order">
+              <img style={{ width: "120px", height: "42px" }} src={Logo} />
+            </Link>
+          ) : (
+            <Link to="/manager-member">
+              <img style={{ width: "120px", height: "42px" }} src={Logo} />
+            </Link>
+          )}
         </Box>
         <Divider />
         <List component="nav">{RenderMenu()}</List>

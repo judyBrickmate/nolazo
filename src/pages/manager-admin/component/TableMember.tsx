@@ -1,14 +1,4 @@
-import {
-  Button,
-  Paper,
-  StyledEngineProvider,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Button, CircularProgress, Paper, StyledEngineProvider, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { UserService } from "../../../services";
@@ -16,20 +6,11 @@ import { dataUpdateAdmin } from "../../../services/types";
 import EditModal from "./EditModal";
 
 export default function TableMember(props: any) {
-  const { listUser, getMember, userRole } = props;
+  const { listUser, getMember, userRole, loading } = props;
   const [openEdit, setOpenEdit] = useState(false);
   const [userData, setUserData] = useState({});
 
-  const column = [
-    "No",
-    "구분",
-    "ID",
-    "이름",
-    "연락처",
-    "이메일",
-    "등록일",
-    userRole === "총괄관리자" && "수정/삭제",
-  ];
+  const column = ["No", "구분", "ID", "이름", "연락처", "이메일", "등록일", userRole === "총괄관리자" && "수정/삭제"];
 
   const handleClickEdit = (data: any) => {
     openEditModal();
@@ -70,6 +51,7 @@ export default function TableMember(props: any) {
               ))}
             </TableRow>
           </TableHead>
+          {loading && <CircularProgress />}
           <TableBody>
             {listUser.map((row: any, index: any) => (
               <TableRow key={row.id}>
@@ -81,23 +63,14 @@ export default function TableMember(props: any) {
                 <TableCell align="center">{row.name}</TableCell>
                 <TableCell align="center">{row.phone}</TableCell>
                 <TableCell align="center">{row.email}</TableCell>
-                <TableCell align="center">
-                  {moment(row.createdAt).format("YYYY-MM-DD")}
-                </TableCell>
+                <TableCell align="center">{moment(row.createdAt).format("YYYY-MM-DD")}</TableCell>
                 {userRole === "총괄관리자" && (
                   <TableCell scope="row" align="center">
-                    <Button
-                      variant="contained"
-                      style={{ marginRight: "10px" }}
-                      onClick={() => handleClickEdit(row)}
-                    >
+                    <Button variant="contained" style={{ marginRight: "10px" }} onClick={() => handleClickEdit(row)}>
                       수정
                     </Button>
 
-                    <Button
-                      variant="contained"
-                      onClick={() => handleDelete(row)}
-                    >
+                    <Button variant="contained" onClick={() => handleDelete(row)}>
                       삭제
                     </Button>
                   </TableCell>
@@ -107,13 +80,7 @@ export default function TableMember(props: any) {
           </TableBody>
         </Table>
       </TableContainer>
-      {openEdit && (
-        <EditModal
-          userData={userData}
-          setOpenEdit={setOpenEdit}
-          getMember={getMember}
-        />
-      )}
+      {openEdit && <EditModal userData={userData} setOpenEdit={setOpenEdit} getMember={getMember} />}
     </StyledEngineProvider>
   );
 }

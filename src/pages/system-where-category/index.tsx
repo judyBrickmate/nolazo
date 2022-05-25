@@ -5,6 +5,7 @@ import TablePrimary from "./component/TablePrimary";
 import TableSecondary from "./component/TableSecondary";
 
 export default function SystemWhereCategory() {
+  const [loading, setLoading] = useState(false);
   const [allCategories, setAllCategories] = useState([]);
 
   useEffect(() => {
@@ -13,17 +14,11 @@ export default function SystemWhereCategory() {
 
   const getWherecategory = async () => {
     try {
+      setLoading(true);
       const startDate = "2022-01-01";
       const endDate = moment().toISOString();
 
-      const response = await CategoryService.getCategoryList(
-        "WHERE",
-        startDate,
-        endDate,
-        true,
-        1,
-        200
-      );
+      const response = await CategoryService.getCategoryList("WHERE", startDate, endDate, true, 1, 200);
 
       if (response.status === 200) {
         setAllCategories(response.data?.data?.items);
@@ -33,13 +28,12 @@ export default function SystemWhereCategory() {
         alert("YYYY-MM-DD와 같은 날짜방식으로 입력하세요.");
       }
     }
+    setLoading(false);
   };
 
   const { primary, secondary } = allCategories.reduce(
     (total, item) => {
-      (item as any).parent?.id === 3
-        ? total.primary.push(item)
-        : total.secondary.push(item);
+      (item as any).parent?.id === 3 ? total.primary.push(item) : total.secondary.push(item);
       return total;
     },
     { primary: [], secondary: [] }
@@ -50,8 +44,8 @@ export default function SystemWhereCategory() {
 
   return (
     <div>
-      <TablePrimary allCategory={primary} />
-      <TableSecondary allCategory={primary} />
+      <TablePrimary allCategory={primary} loading={loading} />
+      <TableSecondary allCategory={primary} loading={loading} />
     </div>
   );
 }
